@@ -64,30 +64,30 @@ const About: React.FC = () => {
           <p className="mb-6 text-base">i love and adore those things below:</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-base">
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+            <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
               <span className="text-terminal-green font-semibold">
                 typescript
               </span>
               <span className="text-gray-500"> (node.js)</span>
             </div>
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+            <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
               <span className="text-terminal-green font-semibold">
                 postgresql, redis
               </span>
             </div>
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+            <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
               <span className="text-terminal-green font-semibold">
                 writing my own versions of libraries/projects that already exist
               </span>
             </div>
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+            <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
               <span className="text-terminal-green font-semibold">cats</span>
               <span className="text-gray-500"> 🐱</span>
             </div>
           </div>
         </div>
 
-        <div className="mt-10 bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <div className="mt-10 bg-[#212121] border border-gray-700 rounded-lg p-6">
           <h2 className="text-2xl text-white mb-6">
             <span className="text-gray-500">## </span>
             currently coding
@@ -97,7 +97,7 @@ const About: React.FC = () => {
             or, well, simply nothing if i'm not listening to anything atm :p
           </p>
 
-          <div className="flex items-center space-x-6 bg-black border border-gray-600 rounded-lg p-4">
+          <div className="flex items-center space-x-6 bg-[#161616] border border-gray-600 rounded-lg p-4">
             <div className="w-16 h-16 bg-gray-700 rounded-lg"></div>
             <div className="flex-1">
               <div className="text-white font-semibold text-base">deepfake</div>

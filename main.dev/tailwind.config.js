@@ -13,6 +13,9 @@ export default {
           "monospace",
         ],
       },
+      backgroundColor: {
+        blackkind: "212121",
+      },
       colors: {
         "terminal-green": "#535353",
         gray: {
