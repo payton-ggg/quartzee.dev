@@ -4,7 +4,7 @@ const AnimatedTitle = () => {
   const isActive = true;
 
   // Бегущая строка
-  const useScrollingTitle = (text: string, speed = 400) => {
+  const useScrollingTitle = (text: string, speed = 800) => {
     useEffect(() => {
       if (!isActive) return;
 
@@ -16,12 +16,12 @@ const AnimatedTitle = () => {
 
       return () => {
         clearInterval(interval);
-        document.title = "Portfolio";
+        document.title = "quartzee ★ dev";
       };
     }, [text, speed]);
   };
 
-  useScrollingTitle(" quartzee ★ dev ");
+  useScrollingTitle(" quartzee ★ dev    ");
 
   return <></>;
 };
