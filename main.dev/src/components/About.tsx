@@ -1,19 +1,16 @@
 import React from "react";
-import TerminalCursor from "./TerminalCursor";
-import GlitchText from "./GlitchText";
 
 const About: React.FC = () => {
   return (
-    <div className="space-y-10">
-      <div className="border-b border-gray-800 pb-6">
-        <h1 className="text-3xl font-mono text-white mb-3">
+    <div className="space-y-10 leading-[0.8]">
+      <div className="">
+        <h1 className="text-4xl font-mono font-extrabold text-white mb-3">
           <span className="text-gray-500"># </span>
-          <GlitchText text="about me" />
-          <TerminalCursor />
+          welcome!
         </h1>
       </div>
 
-      <div className="space-y-8 font-mono text-gray-300 leading-relaxed text-base">
+      <div className="space-y-8 font-mono text-gray-300 leading-none text-base">
         <p className="text-lg">
           <span className="text-terminal-green">$</span> I build and break
           ideas.
@@ -27,16 +24,14 @@ const About: React.FC = () => {
         </p>
 
         <div className="mt-10">
-          <h2 className="text-2xl text-white mb-6">
+          <h2 className="text-3xl text-white mb-6 font-extrabold">
             <span className="text-gray-500">## </span>
-            what do i do<span className="text-gray-500">?</span>
+            what do i do?
           </h2>
 
           <div className="space-y-6 text-base">
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-5">
-              <span className="text-terminal-green font-semibold">
-                puregram
-              </span>
+            <div className="">
+              puregram
               <span className="text-gray-500"> - </span>
               <span className="text-gray-300">
                 a telegram bot api wrapper that is written in typescript. it is
@@ -44,10 +39,8 @@ const About: React.FC = () => {
               </span>
             </div>
 
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-5">
-              <span className="text-terminal-green font-semibold">
-                anime ai bot
-              </span>
+            <div className="">
+              anime ai bot
               <span className="text-gray-500"> - </span>
               <span className="text-gray-300">
                 a telegram bot that transforms an image into an anime-style
@@ -63,7 +56,7 @@ const About: React.FC = () => {
         </div>
 
         <div className="mt-10">
-          <h2 className="text-2xl text-white mb-6">
+          <h2 className="text-3xl font-extrabold text-white mb-6">
             <span className="text-gray-500">## </span>
             skills <span className="text-gray-500">(and not only)</span>
           </h2>
