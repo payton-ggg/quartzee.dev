@@ -31,25 +31,24 @@ const About: React.FC = () => {
           </h2>
 
           <div className="space-y-6 text-base">
+            currently building full stack apps with Node.js/Python and
+            React.js/Next.js. <br /> <br /> i’m also diving deep into AI,
+            blockchain, and browser automation. from parsers to pwa's — if it
+            runs in the cloud or clicks on your behalf, i've probably built it.
             <div className="">
-              puregram
+              real-time AI interview assistant
               <span className="text-gray-500"> - </span>
               <span className="text-gray-300">
-                a telegram bot api wrapper that is written in typescript. it is
-                my main-priority project!
+                listens, thinks, and speaks back
               </span>
             </div>
-
             <div className="">
-              anime ai bot
+              telegram mini-apps
               <span className="text-gray-500"> - </span>
               <span className="text-gray-300">
-                a telegram bot that transforms an image into an anime-style
-                image. at its peak it had more than 3.5 million users! as for
-                now it is transferred to another owner.
+                with tasks, logic, and crypto under the hood
               </span>
             </div>
-
             <p className="text-gray-500 text-sm italic mt-6">
               i don't have much to say about myself honestly spoo...
             </p>
@@ -59,31 +58,32 @@ const About: React.FC = () => {
         <div className="mt-10">
           <h2 className="text-3xl font-extrabold text-white mb-6">
             <span className="text-gray-500">## </span>
-            skills <span className="text-gray-500">(and not only)</span>
+            skills <span className="text-gray-500">(and obsession)</span>
           </h2>
 
-          <p className="mb-6 text-base">i love and adore those things below:</p>
+          <p className="mb-6 text-base">i go deep on:</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-base">
             <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
               <span className="text-terminal-green font-semibold">
-                typescript
+                typeScript, react, next.js, node.js
               </span>
-              <span className="text-gray-500"> (node.js)</span>
+              <span className="text-gray-500"> (js family)</span>
             </div>
             <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
               <span className="text-terminal-green font-semibold">
-                postgresql, redis
+                postgresql, mongodb
               </span>
             </div>
             <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
               <span className="text-terminal-green font-semibold">
-                writing my own versions of libraries/projects that already exist
+                writing clean, modular, scalable code
               </span>
             </div>
             <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
-              <span className="text-terminal-green font-semibold">cats</span>
-              <span className="text-gray-500"> 🐱</span>
+              <span className="text-terminal-green font-semibold">
+                thinking like a product owner, even when i’m just the builder
+              </span>
             </div>
           </div>
         </div>
