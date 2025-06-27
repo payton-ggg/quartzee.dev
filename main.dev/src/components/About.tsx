@@ -13,15 +13,15 @@ const About: React.FC = () => {
 
       <div className="space-y-8 font-mono text-gray-300 leading-none text-base">
         <p className="text-lg">
-          <span className="text-terminal-green">$</span> I build and break
-          ideas.
+          <span className="text-terminal-green">$</span> i code full stack stuff
+          and think in systems.
         </p>
 
         <p className="text-lg">
-          I'm <span className="text-white font-semibold">17</span> but I've been
-          doing this since I was{" "}
-          <span className="text-white font-semibold">13</span>, honestly sounds
-          more like a Drake bar than me.
+          I'm <span className="text-white font-semibold">18,</span> used to race
+          kayaks with a body built for war and water. now i race thoughts and
+          <span className="text-white font-semibold">push code</span> - clean,
+          fast, and sharp.
         </p>
 
         <div className="mt-10">

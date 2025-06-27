@@ -1,7 +1,7 @@
-export type TrackData = {
+export type Track = {
   name: string;
-  artists: string;
-  albumImage: string;
+  artist: string;
+  image: string;
   progress: number;
   duration: number;
 };
