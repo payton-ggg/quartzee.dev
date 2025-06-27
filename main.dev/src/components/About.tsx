@@ -1,4 +1,5 @@
 import React from "react";
+import CurrentlyPlaying from "./CurrentlyPlaying";
 
 const About: React.FC = () => {
   return (
@@ -86,30 +87,7 @@ const About: React.FC = () => {
             </div>
           </div>
         </div>
-
-        <div className="mt-10 bg-[#212121] border border-gray-700 rounded-lg p-6">
-          <h2 className="text-2xl text-white mb-6">
-            <span className="text-gray-500">## </span>
-            currently coding
-          </h2>
-          <p className="text-base text-gray-400 mb-6">
-            below lies the track that i'm currently listening to on spotify...
-            or, well, simply nothing if i'm not listening to anything atm :p
-          </p>
-
-          <div className="flex items-center space-x-6 bg-[#161616] border border-gray-600 rounded-lg p-4">
-            <div className="w-16 h-16 bg-gray-700 rounded-lg"></div>
-            <div className="flex-1">
-              <div className="text-white font-semibold text-base">deepfake</div>
-              <div className="text-gray-400 text-sm">by brakence</div>
-            </div>
-            <div className="text-gray-400 text-sm">2:24 / 5:30</div>
-          </div>
-
-          <p className="text-xs text-gray-500 mt-3">
-            this data is approximate and may be delayed by a few seconds.
-          </p>
-        </div>
+        <CurrentlyPlaying />
       </div>
     </div>
   );
