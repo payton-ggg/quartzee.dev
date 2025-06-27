@@ -3,7 +3,7 @@ import CurrentlyPlaying from "./CurrentlyPlaying";
 
 const About: React.FC = () => {
   return (
-    <div className="space-y-10 leading-[0.8]">
+    <div className="space-y-10 leading-[0.8] max-md:p-2">
       <div className="">
         <h1 className="text-4xl font-mono font-extrabold text-white mb-3">
           <span className="text-gray-500"># </span>
@@ -88,6 +88,14 @@ const About: React.FC = () => {
           </div>
         </div>
         <CurrentlyPlaying />
+        <div className="mt-10 flex items-center justify-center">
+          <div>
+            <a href="https://t.me/quartzee" target="_blank" rel="noreferrer">
+              telegram {}
+              <span className="text-gray-500"> (if you love me)</span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
