@@ -4,7 +4,7 @@ const AnimatedTitle = () => {
   const isActive = true;
 
   // Бегущая строка
-  const useScrollingTitle = (text: string, speed = 600) => {
+  const useScrollingTitle = (text: string, speed = 200) => {
     useEffect(() => {
       if (!isActive) return;
 
