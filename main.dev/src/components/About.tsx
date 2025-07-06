@@ -88,14 +88,6 @@ const About: React.FC = () => {
           </div>
         </div>
         <CurrentlyPlaying />
-        <div className="mt-10 flex items-center justify-center">
-          <div>
-            <a href="https://t.me/quartzee" target="_blank" rel="noreferrer">
-              telegram {}
-              <span className="text-gray-500"> (if you love me)</span>
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   );
