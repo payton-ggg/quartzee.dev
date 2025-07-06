@@ -2,9 +2,9 @@ import { Send } from "lucide-react"
 
 const Letterbox = () => {
   return (
-    <div className="bg-[#212121] border border-gray-700 rounded-lg p-8 mt-14">
-      <h3 className="text-2xl font-mono text-white mb-6">
-        <span className="text-gray-500">### </span>
+    <div className="mt-14">
+      <h3 className="text-3xl font-extrabold font-mono text-white mb-6">
+        <span className="text-gray-500">## </span>
         anonymous letterbox
       </h3>
       <p className="font-mono text-gray-400 text-base mb-6">
