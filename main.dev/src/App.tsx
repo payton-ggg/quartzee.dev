@@ -11,7 +11,7 @@ function App() {
         <About />
         {/* <Letterbox />
         <Shoutbox /> */}
-        <div className="mt-10 flex items-center justify-center">
+        <div className="mt-10 mb-10 flex items-center justify-center">
           <div>
             <a href="https://t.me/quartzee" target="_blank" rel="noreferrer">
               telegram {}
