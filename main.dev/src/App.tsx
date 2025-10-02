@@ -9,8 +9,8 @@ function App() {
       <AnimatedTitle />
       <main className="lg:p-16 max-w-5xl ">
         <About />
-        <Letterbox />
-        <Shoutbox />
+        {/* <Letterbox />
+        <Shoutbox /> */}
         <div className="mt-10 flex items-center justify-center">
           <div>
             <a href="https://t.me/quartzee" target="_blank" rel="noreferrer">
