@@ -1,5 +1,6 @@
 import React from "react";
 import CurrentlyPlaying from "./CurrentlyPlaying";
+import SkillsGraph from "./SkillsGraph";
 
 const About: React.FC = () => {
   return (
@@ -32,7 +33,7 @@ const About: React.FC = () => {
 
           <div className="space-y-6 text-base">
             currently building full stack apps with Node.js/Python and
-            React.js/Next.js. <br /> <br /> i’m also diving deep into AI,
+            React.js/Next.js. <br /> <br /> i'm also diving deep into AI,
             blockchain, and browser automation. from parsers to pwa's — if it
             runs in the cloud or clicks on your behalf, i've probably built it.
             <div className="">
@@ -55,38 +56,7 @@ const About: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-10">
-          <h2 className="text-3xl font-extrabold text-white mb-6">
-            <span className="text-gray-500">## </span>
-            skills <span className="text-gray-500">(and obsession)</span>
-          </h2>
-
-          <p className="mb-6 text-base">i go deep on:</p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-base">
-            <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
-              <span className="text-terminal-green font-semibold">
-                typeScript, react, next.js, node.js
-              </span>
-              <span className="text-gray-500"> (js family)</span>
-            </div>
-            <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
-              <span className="text-terminal-green font-semibold">
-                postgresql, mongodb
-              </span>
-            </div>
-            <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
-              <span className="text-terminal-green font-semibold">
-                writing clean, modular, scalable code
-              </span>
-            </div>
-            <div className="bg-[#212121] border border-gray-700 rounded-lg p-4">
-              <span className="text-terminal-green font-semibold">
-                thinking like a product owner, even when i’m just the builder
-              </span>
-            </div>
-          </div>
-        </div>
+        <SkillsGraph />
         <CurrentlyPlaying />
       </div>
     </div>
