@@ -1,16 +1,14 @@
 import About from "./components/About";
 import AnimatedTitle from "./components/AnimatedTitle";
-import Letterbox from "./components/Letterbox";
-import Shoutbox from "./components/Shoutbox";
+import KyivClock from "./components/KyivClock";
 
 function App() {
   return (
     <div className="min-h-screen text-white font-mono flex flex-col justify-center items-center">
+      <KyivClock />
       <AnimatedTitle />
       <main className="lg:p-16 max-w-5xl ">
         <About />
-        {/* <Letterbox />
-        <Shoutbox /> */}
         <div className="mt-10 mb-10 flex items-center justify-center">
           <div>
             <a href="https://t.me/quartzee" target="_blank" rel="noreferrer">
