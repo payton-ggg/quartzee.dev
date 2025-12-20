@@ -15,6 +15,13 @@ function App() {
               telegram {}
               <span className="text-gray-500"> (if you love me)</span>
             </a>
+            <a
+              href="https://github.com/payton-ggg"
+              target="_blank"
+              rel="noreferrer"
+            >
+              github
+            </a>
           </div>
         </div>
       </main>
