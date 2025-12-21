@@ -1,6 +1,7 @@
 import React from "react";
 import CurrentlyPlaying from "./CurrentlyPlaying";
 import SkillsGraph from "./SkillsGraph";
+import ExperienceSection from "./ExperienceSection";
 
 const About: React.FC = () => {
   return (
@@ -57,6 +58,7 @@ const About: React.FC = () => {
         </div>
 
         <SkillsGraph />
+        <ExperienceSection />
         <CurrentlyPlaying />
       </div>
     </div>
