@@ -18,15 +18,20 @@ const SkillsGraph = () => {
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Interactive states
-  const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  // Update dimensions on resize
+  const velocityRef = useRef({ x: 0, y: 0 });
+  const lastPosRef = useRef({ x: 0, y: 0, time: 0 });
+  const animationFrameRef = useRef<number | null>(null);
+
+  const nodeVelocityRef = useRef({ x: 0, y: 0 });
+  const lastNodePosRef = useRef({ x: 0, y: 0, time: 0 });
+  const nodeAnimationFrameRef = useRef<number | null>(null);
+
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -41,7 +46,17 @@ const SkillsGraph = () => {
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
-  // Initial node coordinates (relative 0-1)
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (nodeAnimationFrameRef.current) {
+        cancelAnimationFrame(nodeAnimationFrameRef.current);
+      }
+    };
+  }, []);
+
   const initialNodes: Node[] = [
     { id: "fullstack", label: "Full Stack", x: 0.5, y: 0.5, category: "core" },
     { id: "react", label: "React", x: 0.18, y: 0.18, category: "frontend" },
@@ -109,7 +124,6 @@ const SkillsGraph = () => {
     },
   ];
 
-  // Node positions state
   const [nodePositions, setNodePositions] = useState<
     Map<string, { x: number; y: number }>
   >(
@@ -121,7 +135,6 @@ const SkillsGraph = () => {
     )
   );
 
-  // Update positions on dimension change
   useEffect(() => {
     setNodePositions(
       new Map(
@@ -133,7 +146,6 @@ const SkillsGraph = () => {
     );
   }, [dimensions.width, dimensions.height]);
 
-  // Create nodes with current positions
   const nodes = initialNodes.map((node) => ({
     ...node,
     ...(nodePositions.get(node.id) || {
@@ -219,14 +231,69 @@ const SkillsGraph = () => {
     return edge.from === hoveredNode || edge.to === hoveredNode;
   };
 
-  // Zoom handler
+  const applyMomentum = () => {
+    if (
+      Math.abs(velocityRef.current.x) < 0.05 &&
+      Math.abs(velocityRef.current.y) < 0.05
+    ) {
+      velocityRef.current = { x: 0, y: 0 };
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      return;
+    }
+
+    setPan((prev) => ({
+      x: prev.x + velocityRef.current.x,
+      y: prev.y + velocityRef.current.y,
+    }));
+
+    velocityRef.current.x *= 0.76;
+    velocityRef.current.y *= 0.76;
+
+    animationFrameRef.current = requestAnimationFrame(applyMomentum);
+  };
+
+  const applyNodeMomentum = (nodeId: string) => {
+    if (
+      Math.abs(nodeVelocityRef.current.x) < 0.05 &&
+      Math.abs(nodeVelocityRef.current.y) < 0.05
+    ) {
+      nodeVelocityRef.current = { x: 0, y: 0 };
+      if (nodeAnimationFrameRef.current) {
+        cancelAnimationFrame(nodeAnimationFrameRef.current);
+        nodeAnimationFrameRef.current = null;
+      }
+      return;
+    }
+
+    setNodePositions((prev) => {
+      const currentPos = prev.get(nodeId);
+      if (!currentPos) return prev;
+
+      const newMap = new Map(prev);
+      newMap.set(nodeId, {
+        x: currentPos.x + nodeVelocityRef.current.x,
+        y: currentPos.y + nodeVelocityRef.current.y,
+      });
+      return newMap;
+    });
+
+    nodeVelocityRef.current.x *= 0.78;
+    nodeVelocityRef.current.y *= 0.78;
+
+    nodeAnimationFrameRef.current = requestAnimationFrame(() =>
+      applyNodeMomentum(nodeId)
+    );
+  };
+
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     const delta = e.deltaY > 0 ? 0.9 : 1.1;
     setZoom((prev) => Math.max(0.3, Math.min(3, prev * delta)));
   };
 
-  // Pan handlers
   const handleMouseDown = (e: React.MouseEvent) => {
     if (
       e.target === e.currentTarget ||
@@ -234,15 +301,32 @@ const SkillsGraph = () => {
     ) {
       setIsPanning(true);
       setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+      lastPosRef.current = { x: e.clientX, y: e.clientY, time: Date.now() };
+      velocityRef.current = { x: 0, y: 0 };
+
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
     }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isPanning) {
-      setPan({ x: e.clientX - panStart.x, y: e.clientY - panStart.y });
+      const newPan = { x: e.clientX - panStart.x, y: e.clientY - panStart.y };
+      setPan(newPan);
+
+      const now = Date.now();
+      const dt = now - lastPosRef.current.time;
+      if (dt > 0) {
+        velocityRef.current = {
+          x: ((e.clientX - lastPosRef.current.x) / dt) * 30,
+          y: ((e.clientY - lastPosRef.current.y) / dt) * 30,
+        };
+      }
+      lastPosRef.current = { x: e.clientX, y: e.clientY, time: now };
     }
 
-    // Drag node
     if (draggedNode) {
       const svg = containerRef.current?.querySelector("svg");
       if (svg) {
@@ -255,16 +339,43 @@ const SkillsGraph = () => {
           newMap.set(draggedNode, { x: x - dragOffset.x, y: y - dragOffset.y });
           return newMap;
         });
+
+        const now = Date.now();
+        const dt = now - lastNodePosRef.current.time;
+        if (dt > 0) {
+          nodeVelocityRef.current = {
+            x: ((x - lastNodePosRef.current.x) / dt) * 30,
+            y: ((y - lastNodePosRef.current.y) / dt) * 30,
+          };
+        }
+        lastNodePosRef.current = { x, y, time: now };
       }
     }
   };
 
   const handleMouseUp = () => {
+    if (isPanning) {
+      if (
+        Math.abs(velocityRef.current.x) > 0.3 ||
+        Math.abs(velocityRef.current.y) > 0.3
+      ) {
+        applyMomentum();
+      }
+    }
+
+    if (draggedNode) {
+      if (
+        Math.abs(nodeVelocityRef.current.x) > 0.3 ||
+        Math.abs(nodeVelocityRef.current.y) > 0.3
+      ) {
+        applyNodeMomentum(draggedNode);
+      }
+    }
+
     setIsPanning(false);
     setDraggedNode(null);
   };
 
-  // Node drag handlers
   const handleNodeMouseDown = (e: React.MouseEvent, nodeId: string) => {
     e.stopPropagation();
     const node = nodes.find((n) => n.id === nodeId);
@@ -276,11 +387,18 @@ const SkillsGraph = () => {
         const x = (e.clientX - rect.left - pan.x) / zoom;
         const y = (e.clientY - rect.top - pan.y) / zoom;
         setDragOffset({ x: x - node.x, y: y - node.y });
+
+        lastNodePosRef.current = { x, y, time: Date.now() };
+        nodeVelocityRef.current = { x: 0, y: 0 };
+
+        if (nodeAnimationFrameRef.current) {
+          cancelAnimationFrame(nodeAnimationFrameRef.current);
+          nodeAnimationFrameRef.current = null;
+        }
       }
     }
   };
 
-  // Reset function
   const handleReset = () => {
     setZoom(1);
     setPan({ x: 0, y: 0 });
@@ -292,6 +410,17 @@ const SkillsGraph = () => {
         ])
       )
     );
+    velocityRef.current = { x: 0, y: 0 };
+    nodeVelocityRef.current = { x: 0, y: 0 };
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    if (nodeAnimationFrameRef.current) {
+      cancelAnimationFrame(nodeAnimationFrameRef.current);
+      nodeAnimationFrameRef.current = null;
+    }
   };
 
   const isMobile = dimensions.width < 640;
@@ -335,8 +464,13 @@ const SkillsGraph = () => {
           viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
           preserveAspectRatio="xMidYMid meet"
         >
-          <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
-            {/* Edges */}
+          <g
+            transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}
+            style={{
+              transition:
+                isPanning || draggedNode ? "none" : "transform 0.1s ease-out",
+            }}
+          >
             <g className="edges">
               {edges.map((edge, idx) => {
                 const fromNode = nodes.find((n) => n.id === edge.from);
@@ -360,7 +494,6 @@ const SkillsGraph = () => {
               })}
             </g>
 
-            {/* Nodes */}
             <g className="nodes">
               {nodes.map((node) => {
                 const isActive = isNodeConnected(node.id);
@@ -375,10 +508,9 @@ const SkillsGraph = () => {
                     onMouseLeave={() => setHoveredNode(null)}
                     onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
                     onTouchStart={() => setHoveredNode(node.id)}
-                    className="cursor-move transition-all duration-300"
+                    className="cursor-move transition-opacity duration-300"
                     style={{ opacity: isActive ? 1 : 0.3 }}
                   >
-                    {/* Glow on hover */}
                     {hoveredNode === node.id && (
                       <circle
                         cx={node.x}
@@ -390,7 +522,6 @@ const SkillsGraph = () => {
                       />
                     )}
 
-                    {/* Main circle */}
                     <circle
                       cx={node.x}
                       cy={node.y}
@@ -400,7 +531,6 @@ const SkillsGraph = () => {
                       strokeWidth={2}
                     />
 
-                    {/* Text background */}
                     <rect
                       x={
                         node.x -
@@ -421,7 +551,6 @@ const SkillsGraph = () => {
                       className="pointer-events-none"
                     />
 
-                    {/* Label */}
                     <text
                       x={node.x}
                       y={node.y + radius + (isMobile ? 15 : 20)}
@@ -440,7 +569,6 @@ const SkillsGraph = () => {
           </g>
         </svg>
 
-        {/* Legend */}
         <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 font-mono text-[10px] md:text-xs space-y-1 pointer-events-none">
           <div className="flex items-center gap-1 md:gap-2">
             <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#00ff00]"></div>
@@ -460,7 +588,6 @@ const SkillsGraph = () => {
           </div>
         </div>
 
-        {/* Instructions */}
         <div className="absolute top-2 md:top-4 right-2 md:right-4 font-mono text-[10px] md:text-xs text-gray-500 text-right pointer-events-none">
           <div>Scroll to zoom</div>
           <div>Drag nodes to move</div>
