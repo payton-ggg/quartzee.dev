@@ -39,44 +39,77 @@ const SkillsGraph = () => {
     // Core центр
     { id: "fullstack", label: "Full Stack", x: 0.5, y: 0.5, category: "core" },
 
-    // Frontend кластер (слева вверху)
-    { id: "react", label: "React", x: 0.25, y: 0.25, category: "frontend" },
-    { id: "nextjs", label: "Next.js", x: 0.19, y: 0.42, category: "frontend" },
+    // Frontend кластер (левый верхний квадрант)
+    { id: "react", label: "React", x: 0.2, y: 0.2, category: "frontend" },
+    { id: "nextjs", label: "Next.js", x: 0.15, y: 0.35, category: "frontend" },
     {
       id: "typescript",
       label: "TypeScript",
-      x: 0.37,
-      y: 0.17,
+      x: 0.35,
+      y: 0.15,
+      category: "frontend",
+    },
+    {
+      id: "tailwind",
+      label: "Tailwind",
+      x: 0.25,
+      y: 0.35,
+      category: "frontend",
+    },
+    { id: "zustand", label: "Zustand", x: 0.12, y: 0.23, category: "frontend" },
+    {
+      id: "hookform",
+      label: "Hook Form",
+      x: 0.3,
+      y: 0.28,
       category: "frontend",
     },
 
-    // Backend кластер (справа вверху)
-    { id: "nodejs", label: "Node.js", x: 0.75, y: 0.25, category: "backend" },
-    { id: "python", label: "Python", x: 0.81, y: 0.42, category: "backend" },
+    // Backend кластер (правый верхний квадрант)
+    { id: "nodejs", label: "Node.js", x: 0.75, y: 0.2, category: "backend" },
+    { id: "nestjs", label: "NestJS", x: 0.85, y: 0.28, category: "backend" },
+    { id: "python", label: "Python", x: 0.82, y: 0.38, category: "backend" },
+    { id: "restapi", label: "REST API", x: 0.68, y: 0.32, category: "backend" },
+    { id: "jwt", label: "JWT", x: 0.78, y: 0.12, category: "backend" },
 
-    // Database кластер (справа внизу)
+    // Database кластер (правый нижний квадрант)
     {
       id: "postgres",
       label: "PostgreSQL",
       x: 0.75,
-      y: 0.75,
+      y: 0.7,
       category: "backend",
     },
-    { id: "mongodb", label: "MongoDB", x: 0.62, y: 0.83, category: "backend" },
+    { id: "mongodb", label: "MongoDB", x: 0.65, y: 0.8, category: "backend" },
 
-    // Tools кластер (слева внизу)
-    { id: "ai", label: "AI/ML", x: 0.25, y: 0.67, category: "tools" },
+    // DevOps/Deploy кластер (правый нижний)
+    { id: "vercel", label: "Vercel", x: 0.85, y: 0.75, category: "tools" },
+    {
+      id: "cloudinary",
+      label: "Cloudinary",
+      x: 0.82,
+      y: 0.85,
+      category: "tools",
+    },
+
+    // Tools/Testing кластер (левый нижний квадрант)
+    { id: "jest", label: "Jest", x: 0.15, y: 0.7, category: "tools" },
+    { id: "chrome", label: "Chrome Ext", x: 0.12, y: 0.82, category: "tools" },
+    { id: "stripe", label: "Stripe", x: 0.25, y: 0.75, category: "tools" },
+
+    // Advanced кластер (центр низ)
+    { id: "ai", label: "AI/ML", x: 0.38, y: 0.72, category: "tools" },
     {
       id: "blockchain",
       label: "Blockchain",
-      x: 0.19,
-      y: 0.83,
+      x: 0.35,
+      y: 0.85,
       category: "tools",
     },
     {
       id: "automation",
       label: "Automation",
-      x: 0.37,
+      x: 0.48,
       y: 0.8,
       category: "tools",
     },
@@ -91,28 +124,59 @@ const SkillsGraph = () => {
 
   // Определяем связи
   const edges: Edge[] = [
-    // Core connections
+    // Core connections - Frontend
     { from: "fullstack", to: "react" },
     { from: "fullstack", to: "nextjs" },
     { from: "fullstack", to: "typescript" },
+    { from: "fullstack", to: "tailwind" },
+
+    // Core connections - Backend
     { from: "fullstack", to: "nodejs" },
+    { from: "fullstack", to: "nestjs" },
     { from: "fullstack", to: "python" },
     { from: "fullstack", to: "postgres" },
     { from: "fullstack", to: "mongodb" },
 
-    // Frontend cluster
+    // Frontend cluster connections
     { from: "react", to: "nextjs" },
     { from: "react", to: "typescript" },
+    { from: "react", to: "zustand" },
+    { from: "react", to: "hookform" },
     { from: "nextjs", to: "typescript" },
+    { from: "nextjs", to: "tailwind" },
+    { from: "nextjs", to: "vercel" },
+    { from: "tailwind", to: "typescript" },
+    { from: "zustand", to: "typescript" },
+    { from: "hookform", to: "react" },
 
-    // Backend cluster
+    // Backend cluster connections
+    { from: "nodejs", to: "nestjs" },
     { from: "nodejs", to: "typescript" },
+    { from: "nodejs", to: "restapi" },
+    { from: "nodejs", to: "jwt" },
     { from: "nodejs", to: "postgres" },
     { from: "nodejs", to: "mongodb" },
+    { from: "nestjs", to: "typescript" },
+    { from: "nestjs", to: "jwt" },
+    { from: "nestjs", to: "postgres" },
     { from: "python", to: "postgres" },
     { from: "python", to: "ai" },
+    { from: "restapi", to: "jwt" },
+
+    // DevOps/Deploy connections
+    { from: "vercel", to: "nextjs" },
+    { from: "cloudinary", to: "nextjs" },
+    { from: "cloudinary", to: "nodejs" },
 
     // Tools connections
+    { from: "jest", to: "react" },
+    { from: "jest", to: "typescript" },
+    { from: "chrome", to: "typescript" },
+    { from: "chrome", to: "zustand" },
+    { from: "stripe", to: "nextjs" },
+    { from: "stripe", to: "nodejs" },
+
+    // Advanced tools connections
     { from: "ai", to: "python" },
     { from: "blockchain", to: "nodejs" },
     { from: "automation", to: "nodejs" },
