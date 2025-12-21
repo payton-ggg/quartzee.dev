@@ -39,78 +39,78 @@ const SkillsGraph = () => {
     // Core центр
     { id: "fullstack", label: "Full Stack", x: 0.5, y: 0.5, category: "core" },
 
-    // Frontend кластер (левый верхний квадрант)
-    { id: "react", label: "React", x: 0.2, y: 0.2, category: "frontend" },
-    { id: "nextjs", label: "Next.js", x: 0.15, y: 0.35, category: "frontend" },
+    // Frontend кластер (левый верхний квадрант) - более разреженное
+    { id: "react", label: "React", x: 0.18, y: 0.18, category: "frontend" },
+    { id: "nextjs", label: "Next.js", x: 0.12, y: 0.35, category: "frontend" },
     {
       id: "typescript",
       label: "TypeScript",
-      x: 0.35,
-      y: 0.15,
+      x: 0.32,
+      y: 0.12,
       category: "frontend",
     },
     {
       id: "tailwind",
       label: "Tailwind",
-      x: 0.25,
-      y: 0.35,
+      x: 0.28,
+      y: 0.32,
       category: "frontend",
     },
-    { id: "zustand", label: "Zustand", x: 0.12, y: 0.23, category: "frontend" },
+    { id: "zustand", label: "Zustand", x: 0.08, y: 0.22, category: "frontend" },
     {
       id: "hookform",
       label: "Hook Form",
-      x: 0.3,
-      y: 0.28,
+      x: 0.22,
+      y: 0.38,
       category: "frontend",
     },
 
     // Backend кластер (правый верхний квадрант)
-    { id: "nodejs", label: "Node.js", x: 0.75, y: 0.2, category: "backend" },
-    { id: "nestjs", label: "NestJS", x: 0.85, y: 0.28, category: "backend" },
-    { id: "python", label: "Python", x: 0.82, y: 0.38, category: "backend" },
-    { id: "restapi", label: "REST API", x: 0.68, y: 0.32, category: "backend" },
-    { id: "jwt", label: "JWT", x: 0.78, y: 0.12, category: "backend" },
+    { id: "nodejs", label: "Node.js", x: 0.72, y: 0.15, category: "backend" },
+    { id: "nestjs", label: "NestJS", x: 0.88, y: 0.22, category: "backend" },
+    { id: "python", label: "Python", x: 0.85, y: 0.35, category: "backend" },
+    { id: "restapi", label: "REST API", x: 0.68, y: 0.28, category: "backend" },
+    { id: "jwt", label: "JWT", x: 0.78, y: 0.08, category: "backend" },
 
     // Database кластер (правый нижний квадрант)
     {
       id: "postgres",
       label: "PostgreSQL",
-      x: 0.75,
-      y: 0.7,
+      x: 0.78,
+      y: 0.68,
       category: "backend",
     },
-    { id: "mongodb", label: "MongoDB", x: 0.65, y: 0.8, category: "backend" },
+    { id: "mongodb", label: "MongoDB", x: 0.68, y: 0.78, category: "backend" },
 
     // DevOps/Deploy кластер (правый нижний)
-    { id: "vercel", label: "Vercel", x: 0.85, y: 0.75, category: "tools" },
+    { id: "vercel", label: "Vercel", x: 0.88, y: 0.75, category: "tools" },
     {
       id: "cloudinary",
       label: "Cloudinary",
-      x: 0.82,
-      y: 0.85,
+      x: 0.85,
+      y: 0.88,
       category: "tools",
     },
 
     // Tools/Testing кластер (левый нижний квадрант)
-    { id: "jest", label: "Jest", x: 0.15, y: 0.7, category: "tools" },
-    { id: "chrome", label: "Chrome Ext", x: 0.12, y: 0.82, category: "tools" },
-    { id: "stripe", label: "Stripe", x: 0.25, y: 0.75, category: "tools" },
+    { id: "jest", label: "Jest", x: 0.15, y: 0.68, category: "tools" },
+    { id: "chrome", label: "Chrome Ext", x: 0.08, y: 0.82, category: "tools" },
+    { id: "stripe", label: "Stripe", x: 0.22, y: 0.78, category: "tools" },
 
     // Advanced кластер (центр низ)
-    { id: "ai", label: "AI/ML", x: 0.38, y: 0.72, category: "tools" },
+    { id: "ai", label: "AI/ML", x: 0.38, y: 0.75, category: "tools" },
     {
       id: "blockchain",
       label: "Blockchain",
-      x: 0.35,
-      y: 0.85,
+      x: 0.32,
+      y: 0.88,
       category: "tools",
     },
     {
       id: "automation",
       label: "Automation",
       x: 0.48,
-      y: 0.8,
+      y: 0.82,
       category: "tools",
     },
   ];
@@ -305,6 +305,26 @@ const SkillsGraph = () => {
                     fill={hoveredNode === node.id ? color : "#1a1a1a"}
                     stroke={color}
                     strokeWidth={2}
+                  />
+
+                  {/* Фон под текстом для лучшей читаемости */}
+                  <rect
+                    x={
+                      node.x -
+                      (node.label.length *
+                        (isCoreNode ? coreFontSize : fontSize)) /
+                        2.5
+                    }
+                    y={node.y + radius + (isMobile ? 5 : 10)}
+                    width={
+                      node.label.length *
+                      (isCoreNode ? coreFontSize : fontSize) *
+                      0.65
+                    }
+                    height={isCoreNode ? coreFontSize + 6 : fontSize + 6}
+                    fill="#0a0a0a"
+                    opacity={0.85}
+                    rx={3}
                   />
 
                   {/* Метка узла */}
