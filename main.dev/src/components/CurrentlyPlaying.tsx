@@ -63,7 +63,7 @@ export default function CurrentlyPlaying() {
   };
 
   return (
-    <div className="mt-10 bg-[#212121] border border-gray-700 rounded-lg p-6">
+    <div className="mt-10 bg-[#1a1a1a] border border-gray-700 rounded-lg p-6">
       <h2 className="text-2xl text-white mb-6">
         <span className="text-gray-500">### </span>
         currently coding

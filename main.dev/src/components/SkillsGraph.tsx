@@ -442,7 +442,7 @@ const SkillsGraph = () => {
 
       <div
         ref={containerRef}
-        className="relative w-full bg-[#0a0a0a] border border-gray-700 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing"
+        className="relative w-full bg-[#1a1a1a] border border-gray-700 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing"
         style={{ height: `${dimensions.height}px` }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -544,7 +544,7 @@ const SkillsGraph = () => {
                     />
 
                     <text
-                      x={node.x}
+                      x={node.x - radius / 2}
                       y={node.y + radius + (isMobile ? 15 : 20)}
                       textAnchor="middle"
                       fill={hoveredNode === node.id ? color : "#888888"}

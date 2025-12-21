@@ -123,7 +123,7 @@ const ExperienceSection = () => {
         {experiences.map((exp, expIdx) => (
           <div
             key={expIdx}
-            className="border border-gray-700 bg-[#0a0a0a] rounded-lg overflow-hidden hover:border-green-500 transition-all duration-300"
+            className="border border-gray-700 bg-[#1a1a1a] rounded-lg overflow-hidden hover:border-green-500 transition-all duration-300"
           >
             <div className="p-4 md:p-6 border-b border-gray-800">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
