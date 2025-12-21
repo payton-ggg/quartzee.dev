@@ -1,13 +1,11 @@
 import About from "./components/About";
 import AnimatedTitle from "./components/AnimatedTitle";
 import KyivClock from "./components/KyivClock";
-import VisitorCounter from "./components/VisitorCounter";
 
 function App() {
   return (
     <div className="min-h-screen text-white font-mono flex flex-col justify-center items-center">
       <KyivClock />
-      <VisitorCounter />
       <AnimatedTitle />
       <main className="lg:p-16 max-w-5xl ">
         <About />

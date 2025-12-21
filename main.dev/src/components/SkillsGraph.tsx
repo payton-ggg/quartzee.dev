@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Node {
   id: string;
   label: string;
+  // Используем относительные координаты (0-1)
   x: number;
   y: number;
   category: "core" | "frontend" | "backend" | "tools" | "other";
@@ -15,54 +16,78 @@ interface Edge {
 
 const SkillsGraph = () => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Определяем узлы (навыки)
-  const nodes: Node[] = [
+  // Обновление размеров при изменении размера окна
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const width = containerRef.current.offsetWidth;
+        const height = Math.min(600, Math.max(400, width * 0.75)); // Адаптивная высота
+        setDimensions({ width, height });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, []);
+
+  // Определяем узлы с относительными координатами (0-1)
+  const baseNodes: Node[] = [
     // Core центр
-    { id: "fullstack", label: "Full Stack", x: 400, y: 300, category: "core" },
+    { id: "fullstack", label: "Full Stack", x: 0.5, y: 0.5, category: "core" },
 
     // Frontend кластер (слева вверху)
-    { id: "react", label: "React", x: 200, y: 150, category: "frontend" },
-    { id: "nextjs", label: "Next.js", x: 150, y: 250, category: "frontend" },
+    { id: "react", label: "React", x: 0.25, y: 0.25, category: "frontend" },
+    { id: "nextjs", label: "Next.js", x: 0.19, y: 0.42, category: "frontend" },
     {
       id: "typescript",
       label: "TypeScript",
-      x: 300,
-      y: 100,
+      x: 0.37,
+      y: 0.17,
       category: "frontend",
     },
 
     // Backend кластер (справа вверху)
-    { id: "nodejs", label: "Node.js", x: 600, y: 150, category: "backend" },
-    { id: "python", label: "Python", x: 650, y: 250, category: "backend" },
+    { id: "nodejs", label: "Node.js", x: 0.75, y: 0.25, category: "backend" },
+    { id: "python", label: "Python", x: 0.81, y: 0.42, category: "backend" },
 
     // Database кластер (справа внизу)
     {
       id: "postgres",
       label: "PostgreSQL",
-      x: 600,
-      y: 450,
+      x: 0.75,
+      y: 0.75,
       category: "backend",
     },
-    { id: "mongodb", label: "MongoDB", x: 500, y: 500, category: "backend" },
+    { id: "mongodb", label: "MongoDB", x: 0.62, y: 0.83, category: "backend" },
 
     // Tools кластер (слева внизу)
-    { id: "ai", label: "AI/ML", x: 200, y: 400, category: "tools" },
+    { id: "ai", label: "AI/ML", x: 0.25, y: 0.67, category: "tools" },
     {
       id: "blockchain",
       label: "Blockchain",
-      x: 150,
-      y: 500,
+      x: 0.19,
+      y: 0.83,
       category: "tools",
     },
     {
       id: "automation",
       label: "Automation",
-      x: 300,
-      y: 480,
+      x: 0.37,
+      y: 0.8,
       category: "tools",
     },
   ];
+
+  // Преобразуем относительные координаты в абсолютные
+  const nodes = baseNodes.map((node) => ({
+    ...node,
+    x: node.x * dimensions.width,
+    y: node.y * dimensions.height,
+  }));
 
   // Определяем связи
   const edges: Edge[] = [
@@ -124,16 +149,35 @@ const SkillsGraph = () => {
     return edge.from === hoveredNode || edge.to === hoveredNode;
   };
 
+  // Адаптивные размеры для узлов
+  const isMobile = dimensions.width < 640;
+  const baseRadius = isMobile ? 8 : 12;
+  const coreRadius = isMobile ? 12 : 16;
+  const fontSize = isMobile ? 10 : 12;
+  const coreFontSize = isMobile ? 12 : 14;
+
   return (
     <div className="w-full my-16">
-      <h2 className="text-3xl font-extrabold text-white mb-8 font-mono">
+      <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-6 md:mb-8 font-mono">
         <span className="text-gray-500">## </span>
         skills network
-        <span className="text-gray-500 text-lg ml-2">(hover to explore)</span>
+        <span className="text-gray-500 text-sm md:text-lg ml-2 hidden sm:inline">
+          (hover to explore)
+        </span>
       </h2>
 
-      <div className="relative w-full h-[600px] bg-[#0a0a0a] border border-gray-700 rounded-lg overflow-hidden">
-        <svg width="800" height="600" className="absolute inset-0">
+      <div
+        ref={containerRef}
+        className="relative w-full bg-[#0a0a0a] border border-gray-700 rounded-lg overflow-hidden"
+        style={{ height: `${dimensions.height}px` }}
+      >
+        <svg
+          width={dimensions.width}
+          height={dimensions.height}
+          className="w-full h-full"
+          viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
+          preserveAspectRatio="xMidYMid meet"
+        >
           {/* Рисуем линии связей */}
           <g className="edges">
             {edges.map((edge, idx) => {
@@ -163,7 +207,7 @@ const SkillsGraph = () => {
             {nodes.map((node) => {
               const isActive = isNodeConnected(node.id);
               const isCoreNode = node.category === "core";
-              const radius = isCoreNode ? 16 : 12;
+              const radius = isCoreNode ? coreRadius : baseRadius;
               const color = getCategoryColor(node.category);
 
               return (
@@ -171,6 +215,7 @@ const SkillsGraph = () => {
                   key={node.id}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => setHoveredNode(null)}
+                  onTouchStart={() => setHoveredNode(node.id)}
                   className="cursor-pointer transition-all duration-300"
                   style={{
                     opacity: isActive ? 1 : 0.3,
@@ -201,12 +246,12 @@ const SkillsGraph = () => {
                   {/* Метка узла */}
                   <text
                     x={node.x}
-                    y={node.y + radius + 20}
+                    y={node.y + radius + (isMobile ? 15 : 20)}
                     textAnchor="middle"
                     fill={hoveredNode === node.id ? color : "#888888"}
-                    fontSize={isCoreNode ? 14 : 12}
+                    fontSize={isCoreNode ? coreFontSize : fontSize}
                     fontWeight={isCoreNode ? "bold" : "normal"}
-                    className="font-mono transition-all duration-300"
+                    className="font-mono transition-all duration-300 select-none"
                   >
                     {node.label}
                   </text>
@@ -217,21 +262,21 @@ const SkillsGraph = () => {
         </svg>
 
         {/* Легенда категорий */}
-        <div className="absolute bottom-4 left-4 font-mono text-xs space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#00ff00]"></div>
+        <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 font-mono text-[10px] md:text-xs space-y-1">
+          <div className="flex items-center gap-1 md:gap-2">
+            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#00ff00]"></div>
             <span className="text-gray-400">Core</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#00ccff]"></div>
+          <div className="flex items-center gap-1 md:gap-2">
+            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#00ccff]"></div>
             <span className="text-gray-400">Frontend</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#ff00ff]"></div>
+          <div className="flex items-center gap-1 md:gap-2">
+            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#ff00ff]"></div>
             <span className="text-gray-400">Backend</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#ffff00]"></div>
+          <div className="flex items-center gap-1 md:gap-2">
+            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#ffff00]"></div>
             <span className="text-gray-400">Tools</span>
           </div>
         </div>
