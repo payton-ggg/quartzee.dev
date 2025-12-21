@@ -288,12 +288,6 @@ const SkillsGraph = () => {
     );
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    setZoom((prev) => Math.max(0.3, Math.min(3, prev * delta)));
-  };
-
   const handleMouseDown = (e: React.MouseEvent) => {
     if (
       e.target === e.currentTarget ||
@@ -331,8 +325,8 @@ const SkillsGraph = () => {
       const svg = containerRef.current?.querySelector("svg");
       if (svg) {
         const rect = svg.getBoundingClientRect();
-        const x = (e.clientX - rect.left - pan.x) / zoom;
-        const y = (e.clientY - rect.top - pan.y) / zoom;
+        const x = e.clientX - rect.left - pan.x;
+        const y = e.clientY - rect.top - pan.y;
 
         setNodePositions((prev) => {
           const newMap = new Map(prev);
@@ -384,8 +378,8 @@ const SkillsGraph = () => {
       const svg = containerRef.current?.querySelector("svg");
       if (svg) {
         const rect = svg.getBoundingClientRect();
-        const x = (e.clientX - rect.left - pan.x) / zoom;
-        const y = (e.clientY - rect.top - pan.y) / zoom;
+        const x = e.clientX - rect.left - pan.x;
+        const y = e.clientY - rect.top - pan.y;
         setDragOffset({ x: x - node.x, y: y - node.y });
 
         lastNodePosRef.current = { x, y, time: Date.now() };
@@ -400,7 +394,6 @@ const SkillsGraph = () => {
   };
 
   const handleReset = () => {
-    setZoom(1);
     setPan({ x: 0, y: 0 });
     setNodePositions(
       new Map(
@@ -451,7 +444,6 @@ const SkillsGraph = () => {
         ref={containerRef}
         className="relative w-full bg-[#0a0a0a] border border-gray-700 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing"
         style={{ height: `${dimensions.height}px` }}
-        onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -465,7 +457,7 @@ const SkillsGraph = () => {
           preserveAspectRatio="xMidYMid meet"
         >
           <g
-            transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}
+            transform={`translate(${pan.x}, ${pan.y})`}
             style={{
               transition:
                 isPanning || draggedNode ? "none" : "transform 0.1s ease-out",
@@ -589,7 +581,6 @@ const SkillsGraph = () => {
         </div>
 
         <div className="absolute top-2 md:top-4 right-2 md:right-4 font-mono text-[10px] md:text-xs text-gray-500 text-right pointer-events-none">
-          <div>Scroll to zoom</div>
           <div>Drag nodes to move</div>
           <div>Drag canvas to pan</div>
         </div>
