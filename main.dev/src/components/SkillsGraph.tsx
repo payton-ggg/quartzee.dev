@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 interface Node {
   id: string;
   label: string;
-  // Используем относительные координаты (0-1)
   x: number;
   y: number;
   category: "core" | "frontend" | "backend" | "tools" | "other";
@@ -19,12 +18,20 @@ const SkillsGraph = () => {
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Обновление размеров при изменении размера окна
+  // Interactive states
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [draggedNode, setDraggedNode] = useState<string | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+  // Update dimensions on resize
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
         const width = containerRef.current.offsetWidth;
-        const height = Math.min(600, Math.max(400, width * 0.75)); // Адаптивная высота
+        const height = Math.min(600, Math.max(400, width * 0.75));
         setDimensions({ width, height });
       }
     };
@@ -34,12 +41,9 @@ const SkillsGraph = () => {
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
-  // Определяем узлы с относительными координатами (0-1)
-  const baseNodes: Node[] = [
-    // Core центр
+  // Initial node coordinates (relative 0-1)
+  const initialNodes: Node[] = [
     { id: "fullstack", label: "Full Stack", x: 0.5, y: 0.5, category: "core" },
-
-    // Frontend кластер (левый верхний квадрант) - более разреженное
     { id: "react", label: "React", x: 0.18, y: 0.18, category: "frontend" },
     { id: "nextjs", label: "Next.js", x: 0.12, y: 0.35, category: "frontend" },
     {
@@ -64,15 +68,11 @@ const SkillsGraph = () => {
       y: 0.38,
       category: "frontend",
     },
-
-    // Backend кластер (правый верхний квадрант)
     { id: "nodejs", label: "Node.js", x: 0.72, y: 0.15, category: "backend" },
     { id: "nestjs", label: "NestJS", x: 0.88, y: 0.22, category: "backend" },
     { id: "python", label: "Python", x: 0.85, y: 0.35, category: "backend" },
     { id: "restapi", label: "REST API", x: 0.68, y: 0.28, category: "backend" },
     { id: "jwt", label: "JWT", x: 0.78, y: 0.08, category: "backend" },
-
-    // Database кластер (правый нижний квадрант)
     {
       id: "postgres",
       label: "PostgreSQL",
@@ -81,8 +81,6 @@ const SkillsGraph = () => {
       category: "backend",
     },
     { id: "mongodb", label: "MongoDB", x: 0.68, y: 0.78, category: "backend" },
-
-    // DevOps/Deploy кластер (правый нижний)
     { id: "vercel", label: "Vercel", x: 0.88, y: 0.75, category: "tools" },
     {
       id: "cloudinary",
@@ -91,13 +89,9 @@ const SkillsGraph = () => {
       y: 0.88,
       category: "tools",
     },
-
-    // Tools/Testing кластер (левый нижний квадрант)
     { id: "jest", label: "Jest", x: 0.15, y: 0.68, category: "tools" },
     { id: "chrome", label: "Chrome Ext", x: 0.08, y: 0.82, category: "tools" },
     { id: "stripe", label: "Stripe", x: 0.22, y: 0.78, category: "tools" },
-
-    // Advanced кластер (центр низ)
     { id: "ai", label: "AI/ML", x: 0.38, y: 0.75, category: "tools" },
     {
       id: "blockchain",
@@ -115,29 +109,49 @@ const SkillsGraph = () => {
     },
   ];
 
-  // Преобразуем относительные координаты в абсолютные
-  const nodes = baseNodes.map((node) => ({
+  // Node positions state
+  const [nodePositions, setNodePositions] = useState<
+    Map<string, { x: number; y: number }>
+  >(
+    new Map(
+      initialNodes.map((node) => [
+        node.id,
+        { x: node.x * dimensions.width, y: node.y * dimensions.height },
+      ])
+    )
+  );
+
+  // Update positions on dimension change
+  useEffect(() => {
+    setNodePositions(
+      new Map(
+        initialNodes.map((node) => [
+          node.id,
+          { x: node.x * dimensions.width, y: node.y * dimensions.height },
+        ])
+      )
+    );
+  }, [dimensions.width, dimensions.height]);
+
+  // Create nodes with current positions
+  const nodes = initialNodes.map((node) => ({
     ...node,
-    x: node.x * dimensions.width,
-    y: node.y * dimensions.height,
+    ...(nodePositions.get(node.id) || {
+      x: node.x * dimensions.width,
+      y: node.y * dimensions.height,
+    }),
   }));
 
-  // Определяем связи
   const edges: Edge[] = [
-    // Core connections - Frontend
     { from: "fullstack", to: "react" },
     { from: "fullstack", to: "nextjs" },
     { from: "fullstack", to: "typescript" },
     { from: "fullstack", to: "tailwind" },
-
-    // Core connections - Backend
     { from: "fullstack", to: "nodejs" },
     { from: "fullstack", to: "nestjs" },
     { from: "fullstack", to: "python" },
     { from: "fullstack", to: "postgres" },
     { from: "fullstack", to: "mongodb" },
-
-    // Frontend cluster connections
     { from: "react", to: "nextjs" },
     { from: "react", to: "typescript" },
     { from: "react", to: "zustand" },
@@ -148,8 +162,6 @@ const SkillsGraph = () => {
     { from: "tailwind", to: "typescript" },
     { from: "zustand", to: "typescript" },
     { from: "hookform", to: "react" },
-
-    // Backend cluster connections
     { from: "nodejs", to: "nestjs" },
     { from: "nodejs", to: "typescript" },
     { from: "nodejs", to: "restapi" },
@@ -162,21 +174,15 @@ const SkillsGraph = () => {
     { from: "python", to: "postgres" },
     { from: "python", to: "ai" },
     { from: "restapi", to: "jwt" },
-
-    // DevOps/Deploy connections
     { from: "vercel", to: "nextjs" },
     { from: "cloudinary", to: "nextjs" },
     { from: "cloudinary", to: "nodejs" },
-
-    // Tools connections
     { from: "jest", to: "react" },
     { from: "jest", to: "typescript" },
     { from: "chrome", to: "typescript" },
     { from: "chrome", to: "zustand" },
     { from: "stripe", to: "nextjs" },
     { from: "stripe", to: "nodejs" },
-
-    // Advanced tools connections
     { from: "ai", to: "python" },
     { from: "blockchain", to: "nodejs" },
     { from: "automation", to: "nodejs" },
@@ -186,13 +192,13 @@ const SkillsGraph = () => {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "core":
-        return "#00ff00"; // Яркий зеленый
+        return "#00ff00";
       case "frontend":
-        return "#00ccff"; // Голубой
+        return "#00ccff";
       case "backend":
-        return "#ff00ff"; // Пурпурный
+        return "#ff00ff";
       case "tools":
-        return "#ffff00"; // Желтый
+        return "#ffff00";
       default:
         return "#888888";
     }
@@ -213,7 +219,81 @@ const SkillsGraph = () => {
     return edge.from === hoveredNode || edge.to === hoveredNode;
   };
 
-  // Адаптивные размеры для узлов
+  // Zoom handler
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    setZoom((prev) => Math.max(0.3, Math.min(3, prev * delta)));
+  };
+
+  // Pan handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (
+      e.target === e.currentTarget ||
+      (e.target as SVGElement).tagName === "svg"
+    ) {
+      setIsPanning(true);
+      setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isPanning) {
+      setPan({ x: e.clientX - panStart.x, y: e.clientY - panStart.y });
+    }
+
+    // Drag node
+    if (draggedNode) {
+      const svg = containerRef.current?.querySelector("svg");
+      if (svg) {
+        const rect = svg.getBoundingClientRect();
+        const x = (e.clientX - rect.left - pan.x) / zoom;
+        const y = (e.clientY - rect.top - pan.y) / zoom;
+
+        setNodePositions((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(draggedNode, { x: x - dragOffset.x, y: y - dragOffset.y });
+          return newMap;
+        });
+      }
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsPanning(false);
+    setDraggedNode(null);
+  };
+
+  // Node drag handlers
+  const handleNodeMouseDown = (e: React.MouseEvent, nodeId: string) => {
+    e.stopPropagation();
+    const node = nodes.find((n) => n.id === nodeId);
+    if (node) {
+      setDraggedNode(nodeId);
+      const svg = containerRef.current?.querySelector("svg");
+      if (svg) {
+        const rect = svg.getBoundingClientRect();
+        const x = (e.clientX - rect.left - pan.x) / zoom;
+        const y = (e.clientY - rect.top - pan.y) / zoom;
+        setDragOffset({ x: x - node.x, y: y - node.y });
+      }
+    }
+  };
+
+  // Reset function
+  const handleReset = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+    setNodePositions(
+      new Map(
+        initialNodes.map((node) => [
+          node.id,
+          { x: node.x * dimensions.width, y: node.y * dimensions.height },
+        ])
+      )
+    );
+  };
+
   const isMobile = dimensions.width < 640;
   const baseRadius = isMobile ? 8 : 12;
   const coreRadius = isMobile ? 12 : 16;
@@ -222,18 +302,31 @@ const SkillsGraph = () => {
 
   return (
     <div className="w-full my-16">
-      <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-6 md:mb-8 font-mono">
-        <span className="text-gray-500">## </span>
-        skills network
-        <span className="text-gray-500 text-sm md:text-lg ml-2 hidden sm:inline">
-          (hover to explore)
-        </span>
-      </h2>
+      <div className="flex justify-between items-center mb-6 md:mb-8">
+        <h2 className="text-2xl md:text-3xl font-extrabold text-white font-mono">
+          <span className="text-gray-500">## </span>
+          skills network
+          <span className="text-gray-500 text-sm md:text-lg ml-2 hidden sm:inline">
+            (interactive graph)
+          </span>
+        </h2>
+        <button
+          onClick={handleReset}
+          className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-600 rounded font-mono text-xs md:text-sm transition-all"
+        >
+          Reset
+        </button>
+      </div>
 
       <div
         ref={containerRef}
-        className="relative w-full bg-[#0a0a0a] border border-gray-700 rounded-lg overflow-hidden"
+        className="relative w-full bg-[#0a0a0a] border border-gray-700 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing"
         style={{ height: `${dimensions.height}px` }}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
         <svg
           width={dimensions.width}
@@ -242,111 +335,113 @@ const SkillsGraph = () => {
           viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Рисуем линии связей */}
-          <g className="edges">
-            {edges.map((edge, idx) => {
-              const fromNode = nodes.find((n) => n.id === edge.from);
-              const toNode = nodes.find((n) => n.id === edge.to);
-              if (!fromNode || !toNode) return null;
+          <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
+            {/* Edges */}
+            <g className="edges">
+              {edges.map((edge, idx) => {
+                const fromNode = nodes.find((n) => n.id === edge.from);
+                const toNode = nodes.find((n) => n.id === edge.to);
+                if (!fromNode || !toNode) return null;
 
-              const isActive = isEdgeConnected(edge);
-              return (
-                <line
-                  key={idx}
-                  x1={fromNode.x}
-                  y1={fromNode.y}
-                  x2={toNode.x}
-                  y2={toNode.y}
-                  stroke={isActive ? "#00ff00" : "#333333"}
-                  strokeWidth={isActive ? 2 : 1}
-                  opacity={isActive ? 0.6 : 0.2}
-                  className="transition-all duration-300"
-                />
-              );
-            })}
-          </g>
+                const isActive = isEdgeConnected(edge);
+                return (
+                  <line
+                    key={idx}
+                    x1={fromNode.x}
+                    y1={fromNode.y}
+                    x2={toNode.x}
+                    y2={toNode.y}
+                    stroke={isActive ? "#00ff00" : "#333333"}
+                    strokeWidth={isActive ? 2 : 1}
+                    opacity={isActive ? 0.6 : 0.2}
+                    className="transition-all duration-300 pointer-events-none"
+                  />
+                );
+              })}
+            </g>
 
-          {/* Рисуем узлы */}
-          <g className="nodes">
-            {nodes.map((node) => {
-              const isActive = isNodeConnected(node.id);
-              const isCoreNode = node.category === "core";
-              const radius = isCoreNode ? coreRadius : baseRadius;
-              const color = getCategoryColor(node.category);
+            {/* Nodes */}
+            <g className="nodes">
+              {nodes.map((node) => {
+                const isActive = isNodeConnected(node.id);
+                const isCoreNode = node.category === "core";
+                const radius = isCoreNode ? coreRadius : baseRadius;
+                const color = getCategoryColor(node.category);
 
-              return (
-                <g
-                  key={node.id}
-                  onMouseEnter={() => setHoveredNode(node.id)}
-                  onMouseLeave={() => setHoveredNode(null)}
-                  onTouchStart={() => setHoveredNode(node.id)}
-                  className="cursor-pointer transition-all duration-300"
-                  style={{
-                    opacity: isActive ? 1 : 0.3,
-                  }}
-                >
-                  {/* Внешнее свечение при hover */}
-                  {hoveredNode === node.id && (
+                return (
+                  <g
+                    key={node.id}
+                    onMouseEnter={() => setHoveredNode(node.id)}
+                    onMouseLeave={() => setHoveredNode(null)}
+                    onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+                    onTouchStart={() => setHoveredNode(node.id)}
+                    className="cursor-move transition-all duration-300"
+                    style={{ opacity: isActive ? 1 : 0.3 }}
+                  >
+                    {/* Glow on hover */}
+                    {hoveredNode === node.id && (
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r={radius + 8}
+                        fill={color}
+                        opacity={0.2}
+                        className="animate-pulse pointer-events-none"
+                      />
+                    )}
+
+                    {/* Main circle */}
                     <circle
                       cx={node.x}
                       cy={node.y}
-                      r={radius + 8}
-                      fill={color}
-                      opacity={0.2}
-                      className="animate-pulse"
+                      r={radius}
+                      fill={hoveredNode === node.id ? color : "#1a1a1a"}
+                      stroke={color}
+                      strokeWidth={2}
                     />
-                  )}
 
-                  {/* Основной круг узла */}
-                  <circle
-                    cx={node.x}
-                    cy={node.y}
-                    r={radius}
-                    fill={hoveredNode === node.id ? color : "#1a1a1a"}
-                    stroke={color}
-                    strokeWidth={2}
-                  />
+                    {/* Text background */}
+                    <rect
+                      x={
+                        node.x -
+                        (node.label.length *
+                          (isCoreNode ? coreFontSize : fontSize)) /
+                          2.5
+                      }
+                      y={node.y + radius + (isMobile ? 5 : 10)}
+                      width={
+                        node.label.length *
+                        (isCoreNode ? coreFontSize : fontSize) *
+                        0.65
+                      }
+                      height={isCoreNode ? coreFontSize + 6 : fontSize + 6}
+                      fill="#0a0a0a"
+                      opacity={0.85}
+                      rx={3}
+                      className="pointer-events-none"
+                    />
 
-                  {/* Фон под текстом для лучшей читаемости */}
-                  <rect
-                    x={
-                      node.x -
-                      (node.label.length *
-                        (isCoreNode ? coreFontSize : fontSize)) /
-                        2.5
-                    }
-                    y={node.y + radius + (isMobile ? 5 : 10)}
-                    width={
-                      node.label.length *
-                      (isCoreNode ? coreFontSize : fontSize) *
-                      0.65
-                    }
-                    height={isCoreNode ? coreFontSize + 6 : fontSize + 6}
-                    fill="#0a0a0a"
-                    opacity={0.85}
-                    rx={3}
-                  />
-
-                  {/* Метка узла */}
-                  <text
-                    x={node.x}
-                    y={node.y + radius + (isMobile ? 15 : 20)}
-                    textAnchor="middle"
-                    fill={hoveredNode === node.id ? color : "#888888"}
-                    fontSize={isCoreNode ? coreFontSize : fontSize}
-                    fontWeight={isCoreNode ? "bold" : "normal"}
-                    className="font-mono transition-all duration-300 select-none"
-                  >
-                    {node.label}
-                  </text>
-                </g>
-              );
-            })}
+                    {/* Label */}
+                    <text
+                      x={node.x}
+                      y={node.y + radius + (isMobile ? 15 : 20)}
+                      textAnchor="middle"
+                      fill={hoveredNode === node.id ? color : "#888888"}
+                      fontSize={isCoreNode ? coreFontSize : fontSize}
+                      fontWeight={isCoreNode ? "bold" : "normal"}
+                      className="font-mono transition-all duration-300 select-none pointer-events-none"
+                    >
+                      {node.label}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
           </g>
         </svg>
 
-        {/* Легенда категорий */}
-        <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 font-mono text-[10px] md:text-xs space-y-1">
+        {/* Legend */}
+        <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 font-mono text-[10px] md:text-xs space-y-1 pointer-events-none">
           <div className="flex items-center gap-1 md:gap-2">
             <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#00ff00]"></div>
             <span className="text-gray-400">Core</span>
@@ -363,6 +458,13 @@ const SkillsGraph = () => {
             <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#ffff00]"></div>
             <span className="text-gray-400">Tools</span>
           </div>
+        </div>
+
+        {/* Instructions */}
+        <div className="absolute top-2 md:top-4 right-2 md:right-4 font-mono text-[10px] md:text-xs text-gray-500 text-right pointer-events-none">
+          <div>Scroll to zoom</div>
+          <div>Drag nodes to move</div>
+          <div>Drag canvas to pan</div>
         </div>
       </div>
     </div>
