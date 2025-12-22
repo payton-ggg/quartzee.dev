@@ -1,7 +1,6 @@
 import React from "react";
-import CurrentlyPlaying from "../widgets/CurrentlyPlaying";
-import SkillsGraph from "./SkillsGraph";
-import ExperienceSection from "./ExperienceSection";
+import { CurrentlyPlaying } from "../widgets";
+import { SkillsGraph, ExperienceSection } from "./";
 
 const About: React.FC = () => {
   return (
