@@ -1,8 +1,9 @@
-import { About, AnimatedTitle, KyivClock } from "./components";
+import { About, AnimatedTitle, FontSelector, KyivClock } from "./components";
 
 function App() {
   return (
     <div className="min-h-screen text-white font-mono flex flex-col justify-center items-center">
+      <FontSelector />
       <KyivClock />
       <AnimatedTitle />
       <main className="lg:p-16 max-w-5xl ">

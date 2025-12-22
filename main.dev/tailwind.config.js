@@ -5,6 +5,7 @@ export default {
     extend: {
       fontFamily: {
         mono: [
+          "var(--font-primary)",
           "Cascadia Code",
           "JetBrains Mono",
           "Menlo",
