@@ -1,6 +1,6 @@
-import About from "./components/About";
-import AnimatedTitle from "./components/AnimatedTitle";
-import KyivClock from "./components/KyivClock";
+import About from "./components/sections/About";
+import AnimatedTitle from "./components/layout/AnimatedTitle";
+import KyivClock from "./components/widgets/KyivClock";
 
 function App() {
   return (

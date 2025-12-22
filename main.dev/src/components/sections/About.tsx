@@ -1,5 +1,5 @@
 import React from "react";
-import CurrentlyPlaying from "./CurrentlyPlaying";
+import CurrentlyPlaying from "../widgets/CurrentlyPlaying";
 import SkillsGraph from "./SkillsGraph";
 import ExperienceSection from "./ExperienceSection";
 
