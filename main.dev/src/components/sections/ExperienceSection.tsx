@@ -198,6 +198,15 @@ const ExperienceSection = () => {
         {experiences.map((exp, expIdx) => {
           const isVisible = visibleCards.has(expIdx);
 
+          // Random direction for each card
+          const directions = [
+            { x: -100, y: -50, rotate: -15 }, // from top-left
+            { x: 100, y: -50, rotate: 15 }, // from top-right
+            { x: -100, y: 50, rotate: 15 }, // from bottom-left
+            { x: 100, y: 50, rotate: -15 }, // from bottom-right
+          ];
+          const direction = directions[expIdx % directions.length];
+
           return (
             <div
               key={expIdx}
@@ -214,13 +223,50 @@ const ExperienceSection = () => {
                   : "rotateX(0deg) rotateY(0deg)",
                 transition: "transform 0.1s ease-out",
 
-                // Scroll animation
+                // Explosive scroll animation
                 opacity: isVisible ? 1 : 0,
                 animation: isVisible
-                  ? `slideUpRotate 0.8s ease-out ${expIdx * 0.2}s forwards`
+                  ? `explodeIn-${expIdx} 1s cubic-bezier(0.34, 1.56, 0.64, 1) ${
+                      expIdx * 0.15
+                    }s forwards, glitchShake 0.3s ${expIdx * 0.15 + 0.5}s`
                   : "none",
+                filter: !isVisible ? "blur(10px)" : "blur(0px)",
               }}
             >
+              <style>{`
+                @keyframes explodeIn-${expIdx} {
+                  0% {
+                    opacity: 0;
+                    transform: translate(${direction.x}vw, ${
+                direction.y
+              }vh) rotate(${direction.rotate}deg) scale(0.3);
+                    filter: blur(20px) brightness(2);
+                  }
+                  60% {
+                    transform: translate(0, 0) rotate(${
+                      direction.rotate * 0.3
+                    }deg) scale(1.1);
+                  }
+                  100% {
+                    opacity: 1;
+                    transform: translate(0, 0) rotate(0deg) scale(1);
+                    filter: blur(0px) brightness(1);
+                  }
+                }
+                
+                @keyframes glitchShake {
+                  0%, 100% { transform: translate(0, 0); }
+                  10% { transform: translate(-2px, 2px); }
+                  20% { transform: translate(2px, -2px); }
+                  30% { transform: translate(-2px, -2px); }
+                  40% { transform: translate(2px, 2px); }
+                  50% { transform: translate(-2px, 2px); }
+                  60% { transform: translate(2px, -2px); }
+                  70% { transform: translate(-2px, -2px); }
+                  80% { transform: translate(2px, 2px); }
+                  90% { transform: translate(-2px, 0); }
+                }
+              `}</style>
               {/* Glow effect */}
               <div
                 className="absolute inset-0 pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-300"
@@ -357,19 +403,6 @@ const ExperienceSection = () => {
           );
         })}
       </div>
-
-      <style>{`
-        @keyframes slideUpRotate {
-          from {
-            opacity: 0;
-            transform: perspective(1000px) rotateX(25deg) translateY(50px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: perspective(1000px) rotateX(0deg) translateY(0) scale(1);
-          }
-        }
-      `}</style>
     </div>
   );
 };
