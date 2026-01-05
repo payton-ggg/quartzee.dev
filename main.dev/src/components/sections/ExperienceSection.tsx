@@ -197,14 +197,6 @@ const ExperienceSection = () => {
         {experiences.map((exp, expIdx) => {
           const isVisible = visibleCards.has(expIdx);
 
-          const directions = [
-            { x: -100, y: -50, rotate: -15 },
-            { x: 100, y: -50, rotate: 15 },
-            { x: -100, y: 50, rotate: 15 },
-            { x: 100, y: 50, rotate: -15 },
-          ];
-          const direction = directions[expIdx % directions.length];
-
           return (
             <div
               key={expIdx}
@@ -222,46 +214,25 @@ const ExperienceSection = () => {
                 transition: "transform 0.1s ease-out",
 
                 opacity: isVisible ? 1 : 0,
+                // Premium ease-out-back animation
                 animation: isVisible
-                  ? `explodeIn-${expIdx} 1s cubic-bezier(0.34, 1.56, 0.64, 1) ${
+                  ? `premiumFadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) ${
                       expIdx * 0.15
-                    }s forwards, glitchShake 0.3s ${expIdx * 0.15 + 0.5}s`
+                    }s forwards`
                   : "none",
-                filter: !isVisible ? "blur(10px)" : "blur(0px)",
+                willChange: "transform, opacity",
               }}
             >
               <style>{`
-                @keyframes explodeIn-${expIdx} {
+                @keyframes premiumFadeUp {
                   0% {
                     opacity: 0;
-                    transform: translate(${direction.x}vw, ${
-                direction.y
-              }vh) rotate(${direction.rotate}deg) scale(0.3);
-                    filter: blur(20px) brightness(2);
-                  }
-                  60% {
-                    transform: translate(0, 0) rotate(${
-                      direction.rotate * 0.3
-                    }deg) scale(1.1);
+                    transform: translateY(60px) scale(0.95) rotateX(10deg);
                   }
                   100% {
                     opacity: 1;
-                    transform: translate(0, 0) rotate(0deg) scale(1);
-                    filter: blur(0px) brightness(1);
+                    transform: translateY(0) scale(1) rotateX(0deg);
                   }
-                }
-                
-                @keyframes glitchShake {
-                  0%, 100% { transform: translate(0, 0); }
-                  10% { transform: translate(-2px, 2px); }
-                  20% { transform: translate(2px, -2px); }
-                  30% { transform: translate(-2px, -2px); }
-                  40% { transform: translate(2px, 2px); }
-                  50% { transform: translate(-2px, 2px); }
-                  60% { transform: translate(2px, -2px); }
-                  70% { transform: translate(-2px, -2px); }
-                  80% { transform: translate(2px, 2px); }
-                  90% { transform: translate(-2px, 0); }
                 }
               `}</style>
               {/* Glow effect */}
