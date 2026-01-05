@@ -4,11 +4,13 @@ import {
   FontSelector,
   KyivClock,
   CVFolder,
+  SnowEffect,
 } from "./components";
 
 function App() {
   return (
     <div className="min-h-screen text-white font-mono flex flex-col justify-center items-center">
+      <SnowEffect />
       <FontSelector />
       <KyivClock />
       <CVFolder />
