@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { FileText } from "lucide-react";
 
 const CVFolder = () => {
   const [isAutoOpen, setIsAutoOpen] = useState(false);
@@ -38,17 +37,13 @@ const CVFolder = () => {
         <div className="absolute -top-3 left-0 w-10 h-4 bg-[#252525] rounded-t-md border-2 border-b-0 border-gray-700" />
 
         <div
-          className={`absolute inset-x-2 bottom-2 top-2 bg-gray-200 rounded-sm shadow-sm transition-all duration-500 ease-out flex flex-col items-center p-2 z-10 ${paperClass}`}
+          className={`absolute inset-x-2 bottom-2 top-2 bg-white rounded-sm shadow-sm transition-all duration-500 ease-out flex flex-col items-center overflow-hidden z-10 ${paperClass}`}
         >
-          <div className="w-full h-1.5 bg-gray-400 rounded-full mb-2 opacity-30" />
-          <div className="w-full h-1 bg-gray-400 rounded-full mb-1 opacity-20" />
-          <div className="w-full h-1 bg-gray-400 rounded-full mb-1 opacity-20" />
-          <div className="w-2/3 h-1 bg-gray-400 rounded-full mb-3 opacity-20 mr-auto" />
-
-          <FileText size={16} className="text-gray-400 opacity-50 mt-auto" />
-          <span className="text-[8px] font-bold text-gray-500 font-mono mt-1">
-            CV.pdf
-          </span>
+          <img
+            src="/cv-preview.png"
+            alt="CV Preview"
+            className="w-full h-full object-cover object-top opacity-90 grayscale hover:grayscale-0 transition-all duration-500"
+          />
         </div>
 
         <div
