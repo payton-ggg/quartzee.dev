@@ -26,7 +26,6 @@ const ExperienceSection = () => {
   const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
   const cardRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
-  // Intersection Observer for scroll animations
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -198,12 +197,11 @@ const ExperienceSection = () => {
         {experiences.map((exp, expIdx) => {
           const isVisible = visibleCards.has(expIdx);
 
-          // Random direction for each card
           const directions = [
-            { x: -100, y: -50, rotate: -15 }, // from top-left
-            { x: 100, y: -50, rotate: 15 }, // from top-right
-            { x: -100, y: 50, rotate: 15 }, // from bottom-left
-            { x: 100, y: 50, rotate: -15 }, // from bottom-right
+            { x: -100, y: -50, rotate: -15 },
+            { x: 100, y: -50, rotate: 15 },
+            { x: -100, y: 50, rotate: 15 },
+            { x: 100, y: 50, rotate: -15 },
           ];
           const direction = directions[expIdx % directions.length];
 
@@ -223,7 +221,6 @@ const ExperienceSection = () => {
                   : "rotateX(0deg) rotateY(0deg)",
                 transition: "transform 0.1s ease-out",
 
-                // Explosive scroll animation
                 opacity: isVisible ? 1 : 0,
                 animation: isVisible
                   ? `explodeIn-${expIdx} 1s cubic-bezier(0.34, 1.56, 0.64, 1) ${

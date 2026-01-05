@@ -6,7 +6,6 @@ const VisitorCounter = () => {
   const [glitch, setGlitch] = useState<boolean>(false);
 
   useEffect(() => {
-    // Небольшие случайные колебания для online счетчика (±2)
     const onlineInterval = setInterval(() => {
       setOnline((prev) => {
         const change = Math.floor(Math.random() * 5) - 2; // -2 to +2
@@ -15,12 +14,10 @@ const VisitorCounter = () => {
       });
     }, 3000);
 
-    // Медленный рост total счетчика
     const totalInterval = setInterval(() => {
       setTotal((prev) => prev + Math.floor(Math.random() * 3)); // +0 to +2
     }, 100000);
 
-    // Случайный glitch эффект
     const glitchInterval = setInterval(() => {
       setGlitch(true);
       setTimeout(() => setGlitch(false), 100);

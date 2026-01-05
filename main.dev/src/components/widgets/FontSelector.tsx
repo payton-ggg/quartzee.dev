@@ -46,7 +46,6 @@ const FontSelector: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Load saved font
     const savedFont = localStorage.getItem("theme-font");
     if (savedFont) {
       const font = fonts.find((f) => f.id === savedFont);
@@ -71,7 +70,6 @@ const FontSelector: React.FC = () => {
 
   return (
     <div className="fixed left-4 md:left-6 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-2">
-      {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`p-3 rounded-xl border transition-all duration-300 backdrop-blur-md ${
@@ -91,7 +89,7 @@ const FontSelector: React.FC = () => {
             : "opacity-0 -translate-x-10 scale-95 pointer-events-none absolute left-full top-0 ml-4"
         }`}
       >
-        {isOpen && // Only render children when open to keep logic clean, but using CSS opacity for transition
+        {isOpen &&
           fonts.map((font) => (
             <button
               key={font.id}
