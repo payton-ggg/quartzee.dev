@@ -1,6 +1,7 @@
 import React from "react";
 import { CurrentlyPlaying } from "../widgets";
 import { SkillsGraph, ExperienceSection } from "./";
+import ChangingText from "../ui/ChangingText";
 
 const About: React.FC = () => {
   return (
@@ -18,12 +19,7 @@ const About: React.FC = () => {
           and think in systems.
         </p>
 
-        <p className="text-lg">
-          I'm <span className="text-white font-semibold">18,</span> used to race
-          kayaks with a body built for war and water. now i race thoughts and
-          <span className="text-white font-semibold">push code</span> - clean,
-          fast, and sharp.
-        </p>
+        <ChangingText />
 
         <div className="mt-10">
           <h2 className="text-3xl text-white mb-6 font-extrabold">
