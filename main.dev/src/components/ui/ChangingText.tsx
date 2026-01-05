@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const phrases = [
   "I build products by thinking in systems, not features.",
@@ -7,13 +7,35 @@ const phrases = [
   "From logic to architecture. Clean. Predictable. Scalable.",
 ];
 
+const longestPhrase =
+  "From logic to architecture. Clean. Predictable. Scalable.";
+
 const ChangingText = () => {
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(50);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
     const i = loopNum % phrases.length;
     const fullText = phrases[i];
 
@@ -40,19 +62,32 @@ const ChangingText = () => {
     }
 
     return () => clearTimeout(timer);
-  }, [currentText, isDeleting, loopNum]);
+  }, [currentText, isDeleting, loopNum, isVisible]);
 
   return (
-    <div className="font-mono text-lg md:text-xl min-h-[3.2em] md:min-h-[1.6em] flex items-start md:items-center text-gray-300">
-      <span className="text-terminal-green mr-3 font-bold select-none mt-1 md:mt-0">
-        {">"}
-      </span>
-      <span className="leading-relaxed">
-        {currentText}
-        <span className="animate-pulse text-terminal-green inline-block ml-1 font-bold">
-          |
+    <div
+      ref={containerRef}
+      className="relative font-mono text-lg md:text-xl text-gray-300"
+    >
+      <div className="invisible flex items-start md:items-center opacity-0 select-none pointer-events-none">
+        <span className="mr-3 font-bold mt-1 md:mt-0">{">"}</span>
+        <span className="leading-relaxed">
+          {longestPhrase}
+          <span className="inline-block ml-1 font-bold">|</span>
         </span>
-      </span>
+      </div>
+
+      <div className="absolute top-0 left-0 w-full h-full flex items-start md:items-center">
+        <span className="text-terminal-green mr-3 font-bold select-none mt-1 md:mt-0">
+          {">"}
+        </span>
+        <span className="leading-relaxed">
+          {currentText}
+          <span className="animate-pulse text-terminal-green inline-block ml-1 font-bold">
+            |
+          </span>
+        </span>
+      </div>
     </div>
   );
 };
