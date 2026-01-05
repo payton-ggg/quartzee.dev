@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 const phrases = [
+  "I like Sonya.",
   "I build products by thinking in systems, not features.",
   "No overengineering. Just sharp execution.",
   "Discipline from sport. Precision in code.",
