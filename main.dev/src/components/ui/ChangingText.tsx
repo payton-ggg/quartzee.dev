@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 const phrases = [
-  "I like Sonya.",
+  "I like Sonya. If you do read this, know that you are very beautiful.",
   "I build products by thinking in systems, not features.",
   "No overengineering. Just sharp execution.",
   "Discipline from sport. Precision in code.",
@@ -9,7 +9,7 @@ const phrases = [
 ];
 
 const longestPhrase =
-  "From logic to architecture. Clean. Predictable. Scalable.";
+  "I like Sonya. If you do read this, know that you are very beautiful.";
 
 const ChangingText = () => {
   const [currentText, setCurrentText] = useState("");
