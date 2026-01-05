@@ -14,11 +14,6 @@ const About: React.FC = () => {
       </div>
 
       <div className="space-y-8 font-mono text-gray-300 leading-none text-base">
-        <p className="text-lg">
-          <span className="text-terminal-green">$</span> i code full stack stuff
-          and think in systems.
-        </p>
-
         <ChangingText />
 
         <div className="mt-10">
