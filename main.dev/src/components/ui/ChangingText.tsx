@@ -8,7 +8,7 @@ const phrases = [
 ];
 
 const longestPhrase =
-  "I like Sonya. If you do read this, know that you are very beautiful.";
+  "I build products by thinking in systems, not features.";
 
 const ChangingText = () => {
   const [currentText, setCurrentText] = useState("");
