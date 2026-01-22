@@ -25,7 +25,7 @@ const KyivClock = () => {
   return (
     <div className="fixed top-6 right-6 flex flex-col items-end gap-1 z-50">
       <div className="font-mono text-sm text-gray-500 tracking-wider">
-        [CYPRUS]
+        [KISHINEV]
       </div>
       <div className="font-mono text-2xl text-green-400 tracking-wider glitch">
         {time || "00:00:00"}
