@@ -2,14 +2,13 @@ import { useState, useEffect, useRef } from "react";
 
 const phrases = [
   "I build products by thinking in systems, not features.",
-  "6 feet 2 inches. Low PSL. 180 lbs. 5 trainings per week. 2 ex. Got fucking rejected, because she thinks that I'm woman-chaser, only because everybody thinks that I'm perfect. However, I won't give up. Your bf will do a mistake, and I'm gonna use it",
   "No overengineering. Just sharp execution.",
   "Discipline from sport. Precision in code.",
   "From logic to architecture. Clean. Predictable. Scalable.",
 ];
 
 const longestPhrase =
-  "6 feet 2 inches. Low PSL. 180 lbs. Your bf will do a mistake, and I'm gonna use i. I trainings per week. 2 ex. Got fucking rejected, because she thinks that I'm fuckboy, only because everybody thinks that I'm perfect. However, I won't ever give up.";
+  "From logic to architecture. Clean. Predictable. Scalable.",
 
 const ChangingText = () => {
   const [currentText, setCurrentText] = useState("");
