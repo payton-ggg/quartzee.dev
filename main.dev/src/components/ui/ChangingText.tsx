@@ -8,7 +8,7 @@ const phrases = [
 ];
 
 const longestPhrase =
-  "From logic to architecture. Clean. Predictable. Scalable.",
+  "From logic to architecture. Clean. Predictable. Scalable."
 
 const ChangingText = () => {
   const [currentText, setCurrentText] = useState("");
