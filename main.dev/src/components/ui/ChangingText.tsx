@@ -5,6 +5,7 @@ const phrases = [
   "No overengineering. Just sharp execution.",
   "Discipline from sport. Precision in code.",
   "From logic to architecture. Clean. Predictable. Scalable.",
+  "6 feet 2 inches. Low PSL. Just got a brain to use",
 ];
 
 const longestPhrase =
