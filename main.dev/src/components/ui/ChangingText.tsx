@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from "react";
 
 const phrases = [
   "I build products by thinking in systems, not features.",
-  "Why she prefers him instead of me. She's so pretty. Why him?",
-  "I will wait for you",
+  "Hahahhahahaha",
   "No overengineering. Just sharp execution.",
   "Discipline from sport. Precision in code.",
   "From logic to architecture. Clean. Predictable. Scalable.",
