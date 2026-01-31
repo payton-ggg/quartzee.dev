@@ -16,7 +16,7 @@ const TRACK = {
     "https://images.genius.com/26786877028f8ac71626f2fbd613e51d.1000x1000x1.jpg",
 };
 
-const MusicPlayer = () => {
+const MusicPlayer = ({ onReady }: { onReady?: () => void }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isMobileExpanded, setIsMobileExpanded] = useState(false);
@@ -26,8 +26,17 @@ const MusicPlayer = () => {
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.3;
+
+      const handleCanPlay = () => {
+        if (onReady) onReady();
+      };
+
+      audioRef.current.addEventListener("canplaythrough", handleCanPlay);
+      return () => {
+        audioRef.current?.removeEventListener("canplaythrough", handleCanPlay);
+      };
     }
-  }, []);
+  }, [onReady]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
