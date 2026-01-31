@@ -12,8 +12,7 @@ const TRACK = {
   title: "Forever Young",
   artist: "FACE",
   src: "/ForeverYoung.m4a",
-  cover:
-    "https://images.genius.com/26786877028f8ac71626f2fbd613e51d.1000x1000x1.jpg",
+  cover: "https://i1.sndcdn.com/artworks-000186016976-4hxtr9-t500x500.jpg",
 };
 
 const MusicPlayer = ({ onReady }: { onReady?: () => void }) => {
@@ -141,7 +140,7 @@ const MusicPlayer = ({ onReady }: { onReady?: () => void }) => {
 
           <div className="relative w-16 h-16 md:w-20 md:h-20 shrink-0 border-l border-gray-800">
             <img
-              src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&h=200&auto=format&fit=crop"
+              src={TRACK.cover}
               alt="Album Art"
               className={`w-full h-full object-cover rounded-r-lg transition-all duration-[4s] ease-linear ${
                 isPlaying ? "grayscale-0" : "grayscale opacity-70"
