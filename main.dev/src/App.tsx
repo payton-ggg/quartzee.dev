@@ -5,6 +5,7 @@ import {
   KyivClock,
   CVFolder,
   SnowEffect,
+  MusicPlayer,
 } from "./components";
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
     <div className="min-h-screen text-white font-mono flex flex-col justify-center items-center">
       <SnowEffect />
       <FontSelector />
+      <MusicPlayer />
       <KyivClock />
       <CVFolder />
       <AnimatedTitle />
