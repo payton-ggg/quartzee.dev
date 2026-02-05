@@ -19,20 +19,45 @@ const MusicPlayer = ({ onReady }: { onReady?: () => void }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isMobileExpanded, setIsMobileExpanded] = useState(false);
+  const [autoExpandActive, setAutoExpandActive] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const mobileTimerRef = useRef<number | null>(null);
+  const autoExpandTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.3;
 
       const handleCanPlay = () => {
+        // Notify parent that audio is ready
         if (onReady) onReady();
+
+        // Auto-play the music
+        audioRef.current
+          ?.play()
+          .then(() => {
+            setIsPlaying(true);
+
+            // Auto-expand on mobile for 10 seconds
+            setIsMobileExpanded(true);
+            setAutoExpandActive(true);
+
+            autoExpandTimerRef.current = window.setTimeout(() => {
+              setIsMobileExpanded(false);
+              setAutoExpandActive(false);
+            }, 10000);
+          })
+          .catch((err) => {
+            console.log("Autoplay prevented by browser:", err);
+          });
       };
 
       audioRef.current.addEventListener("canplaythrough", handleCanPlay);
       return () => {
         audioRef.current?.removeEventListener("canplaythrough", handleCanPlay);
+        if (autoExpandTimerRef.current) {
+          clearTimeout(autoExpandTimerRef.current);
+        }
       };
     }
   }, [onReady]);
@@ -58,6 +83,9 @@ const MusicPlayer = ({ onReady }: { onReady?: () => void }) => {
   };
 
   const handleMobileToggle = () => {
+    // Don't allow manual toggle during auto-expand period
+    if (autoExpandActive) return;
+
     if (isMobileExpanded) {
       setIsMobileExpanded(false);
       if (mobileTimerRef.current) clearTimeout(mobileTimerRef.current);
