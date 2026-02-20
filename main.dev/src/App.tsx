@@ -24,7 +24,6 @@ function App() {
   return (
     <div className="min-h-screen text-white font-mono flex flex-col justify-center items-center">
       <LoadingScreen isLoading={isLoading} />
-      <SnowEffect />
       <FontSelector />
       <MusicPlayer onReady={() => setIsLoading(false)} />
       <KyivClock />
