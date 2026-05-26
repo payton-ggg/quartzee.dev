@@ -5,7 +5,7 @@ const phrases = [
   "No overengineering. Just sharp execution.",
   "Discipline from sport. Precision in code.",
   "From logic to architecture. Clean. Predictable. Scalable.",
-  '6 feet 2<sup>1</sup>&frasl;<sub>2</sub> inches. PSL. Just got a fuckin brain to use',
+  '6 feet 2½ inches. PSL. Just got a fuckin brain to use',
 ];
 
 const longestPhrase =
@@ -68,7 +68,6 @@ const ChangingText = () => {
   return (
     <div
       ref={containerRef}
-      dangerouslySetInnerHTML={{ __html: phrases[4] }}
       className="relative font-mono text-lg md:text-xl text-gray-300"
     >
       <div className="invisible flex items-start md:items-center opacity-0 select-none pointer-events-none">
