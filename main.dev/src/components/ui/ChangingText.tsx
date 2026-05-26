@@ -68,6 +68,7 @@ const ChangingText = () => {
   return (
     <div
       ref={containerRef}
+      dangerouslySetInnerHTML={{ __html: phrases[4] }}
       className="relative font-mono text-lg md:text-xl text-gray-300"
     >
       <div className="invisible flex items-start md:items-center opacity-0 select-none pointer-events-none">
