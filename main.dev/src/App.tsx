@@ -3,6 +3,7 @@ import {
   AnimatedTitle,
   FontSelector,
   KyivClock,
+  KyivWeather,
   CVFolder,
   MusicPlayer,
   TelegramFeed,
@@ -14,6 +15,7 @@ function App() {
       <FontSelector />
       <MusicPlayer />
       <KyivClock />
+      <KyivWeather />
       <CVFolder />
       <AnimatedTitle />
       <main className="lg:p-16 max-w-5xl ">
