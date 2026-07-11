@@ -5,6 +5,7 @@ import {
   KyivClock,
   CVFolder,
   MusicPlayer,
+  TelegramFeed,
 } from "./components";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       <AnimatedTitle />
       <main className="lg:p-16 max-w-5xl ">
         <About />
+        <TelegramFeed />
         <div className="mt-10 mb-10 gap-4 flex items-center justify-center">
           <div>
             <a href="https://t.me/quartzee" target="_blank" rel="noreferrer">
