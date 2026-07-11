@@ -14,10 +14,12 @@ interface Edge {
 }
 
 const SkillsGraph = () => {
+  const [mode, setMode] = useState<"graph" | "sphere">("graph");
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Graph state
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
@@ -31,6 +33,11 @@ const SkillsGraph = () => {
   const nodeVelocityRef = useRef({ x: 0, y: 0 });
   const lastNodePosRef = useRef({ x: 0, y: 0, time: 0 });
   const nodeAnimationFrameRef = useRef<number | null>(null);
+
+  // Sphere state
+  const [sphereRotation, setSphereRotation] = useState({ x: 0, y: 0 });
+  const [targetRotation, setTargetRotation] = useState({ x: 0, y: 0 });
+  const [isAutoRotating, setIsAutoRotating] = useState(true);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -48,12 +55,8 @@ const SkillsGraph = () => {
 
   useEffect(() => {
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      if (nodeAnimationFrameRef.current) {
-        cancelAnimationFrame(nodeAnimationFrameRef.current);
-      }
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      if (nodeAnimationFrameRef.current) cancelAnimationFrame(nodeAnimationFrameRef.current);
     };
   }, []);
 
@@ -61,97 +64,40 @@ const SkillsGraph = () => {
     { id: "fullstack", label: "Full Stack", x: 0.5, y: 0.5, category: "core" },
     { id: "react", label: "React", x: 0.18, y: 0.18, category: "frontend" },
     { id: "nextjs", label: "Next.js", x: 0.12, y: 0.35, category: "frontend" },
-    {
-      id: "typescript",
-      label: "TypeScript",
-      x: 0.32,
-      y: 0.12,
-      category: "frontend",
-    },
-    {
-      id: "tailwind",
-      label: "Tailwind",
-      x: 0.28,
-      y: 0.32,
-      category: "frontend",
-    },
+    { id: "typescript", label: "TypeScript", x: 0.32, y: 0.12, category: "frontend" },
+    { id: "tailwind", label: "Tailwind", x: 0.28, y: 0.32, category: "frontend" },
     { id: "zustand", label: "Zustand", x: 0.08, y: 0.22, category: "frontend" },
-    {
-      id: "hookform",
-      label: "Hook Form",
-      x: 0.22,
-      y: 0.38,
-      category: "frontend",
-    },
+    { id: "hookform", label: "Hook Form", x: 0.22, y: 0.38, category: "frontend" },
     { id: "nodejs", label: "Node.js", x: 0.72, y: 0.15, category: "backend" },
     { id: "nestjs", label: "NestJS", x: 0.88, y: 0.22, category: "backend" },
     { id: "python", label: "Python", x: 0.85, y: 0.35, category: "backend" },
     { id: "restapi", label: "REST API", x: 0.68, y: 0.28, category: "backend" },
     { id: "jwt", label: "JWT", x: 0.78, y: 0.08, category: "backend" },
-    {
-      id: "postgres",
-      label: "PostgreSQL",
-      x: 0.78,
-      y: 0.68,
-      category: "backend",
-    },
+    { id: "postgres", label: "PostgreSQL", x: 0.78, y: 0.68, category: "backend" },
     { id: "mongodb", label: "MongoDB", x: 0.68, y: 0.78, category: "backend" },
     { id: "vercel", label: "Vercel", x: 0.88, y: 0.75, category: "tools" },
-    {
-      id: "cloudinary",
-      label: "Cloudinary",
-      x: 0.85,
-      y: 0.88,
-      category: "tools",
-    },
+    { id: "cloudinary", label: "Cloudinary", x: 0.85, y: 0.88, category: "tools" },
     { id: "jest", label: "Jest", x: 0.15, y: 0.68, category: "tools" },
     { id: "chrome", label: "Chrome Ext", x: 0.08, y: 0.82, category: "tools" },
     { id: "stripe", label: "Stripe", x: 0.22, y: 0.78, category: "tools" },
     { id: "ai", label: "AI/ML", x: 0.38, y: 0.75, category: "tools" },
-    {
-      id: "blockchain",
-      label: "Blockchain",
-      x: 0.32,
-      y: 0.88,
-      category: "tools",
-    },
-    {
-      id: "automation",
-      label: "Automation",
-      x: 0.48,
-      y: 0.82,
-      category: "tools",
-    },
+    { id: "blockchain", label: "Blockchain", x: 0.32, y: 0.88, category: "tools" },
+    { id: "automation", label: "Automation", x: 0.48, y: 0.82, category: "tools" },
   ];
 
-  const [nodePositions, setNodePositions] = useState<
-    Map<string, { x: number; y: number }>
-  >(
-    new Map(
-      initialNodes.map((node) => [
-        node.id,
-        { x: node.x * dimensions.width, y: node.y * dimensions.height },
-      ])
-    )
+  const [nodePositions, setNodePositions] = useState<Map<string, { x: number; y: number }>>(
+    new Map(initialNodes.map((node) => [node.id, { x: node.x * dimensions.width, y: node.y * dimensions.height }]))
   );
 
   useEffect(() => {
     setNodePositions(
-      new Map(
-        initialNodes.map((node) => [
-          node.id,
-          { x: node.x * dimensions.width, y: node.y * dimensions.height },
-        ])
-      )
+      new Map(initialNodes.map((node) => [node.id, { x: node.x * dimensions.width, y: node.y * dimensions.height }]))
     );
   }, [dimensions.width, dimensions.height]);
 
   const nodes = initialNodes.map((node) => ({
     ...node,
-    ...(nodePositions.get(node.id) || {
-      x: node.x * dimensions.width,
-      y: node.y * dimensions.height,
-    }),
+    ...(nodePositions.get(node.id) || { x: node.x * dimensions.width, y: node.y * dimensions.height }),
   }));
 
   const edges: Edge[] = [
@@ -203,27 +149,20 @@ const SkillsGraph = () => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "core":
-        return "#00ff00";
-      case "frontend":
-        return "#00ccff";
-      case "backend":
-        return "#ff00ff";
-      case "tools":
-        return "#ffff00";
-      default:
-        return "#888888";
+      case "core": return "#00ff00";
+      case "frontend": return "#00ccff";
+      case "backend": return "#ff00ff";
+      case "tools": return "#ffff00";
+      default: return "#888888";
     }
   };
+
+  // --- Graph Interaction Logic ---
 
   const isNodeConnected = (nodeId: string) => {
     if (!hoveredNode) return true;
     if (nodeId === hoveredNode) return true;
-    return edges.some(
-      (e) =>
-        (e.from === hoveredNode && e.to === nodeId) ||
-        (e.to === hoveredNode && e.from === nodeId)
-    );
+    return edges.some(e => (e.from === hoveredNode && e.to === nodeId) || (e.to === hoveredNode && e.from === nodeId));
   };
 
   const isEdgeConnected = (edge: Edge) => {
@@ -232,10 +171,7 @@ const SkillsGraph = () => {
   };
 
   const applyMomentum = () => {
-    if (
-      Math.abs(velocityRef.current.x) < 0.05 &&
-      Math.abs(velocityRef.current.y) < 0.05
-    ) {
+    if (Math.abs(velocityRef.current.x) < 0.05 && Math.abs(velocityRef.current.y) < 0.05) {
       velocityRef.current = { x: 0, y: 0 };
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -243,23 +179,14 @@ const SkillsGraph = () => {
       }
       return;
     }
-
-    setPan((prev) => ({
-      x: prev.x + velocityRef.current.x,
-      y: prev.y + velocityRef.current.y,
-    }));
-
+    setPan(prev => ({ x: prev.x + velocityRef.current.x, y: prev.y + velocityRef.current.y }));
     velocityRef.current.x *= 0.76;
     velocityRef.current.y *= 0.76;
-
     animationFrameRef.current = requestAnimationFrame(applyMomentum);
   };
 
   const applyNodeMomentum = (nodeId: string) => {
-    if (
-      Math.abs(nodeVelocityRef.current.x) < 0.05 &&
-      Math.abs(nodeVelocityRef.current.y) < 0.05
-    ) {
+    if (Math.abs(nodeVelocityRef.current.x) < 0.05 && Math.abs(nodeVelocityRef.current.y) < 0.05) {
       nodeVelocityRef.current = { x: 0, y: 0 };
       if (nodeAnimationFrameRef.current) {
         cancelAnimationFrame(nodeAnimationFrameRef.current);
@@ -267,37 +194,25 @@ const SkillsGraph = () => {
       }
       return;
     }
-
-    setNodePositions((prev) => {
+    setNodePositions(prev => {
       const currentPos = prev.get(nodeId);
       if (!currentPos) return prev;
-
       const newMap = new Map(prev);
-      newMap.set(nodeId, {
-        x: currentPos.x + nodeVelocityRef.current.x,
-        y: currentPos.y + nodeVelocityRef.current.y,
-      });
+      newMap.set(nodeId, { x: currentPos.x + nodeVelocityRef.current.x, y: currentPos.y + nodeVelocityRef.current.y });
       return newMap;
     });
-
     nodeVelocityRef.current.x *= 0.78;
     nodeVelocityRef.current.y *= 0.78;
-
-    nodeAnimationFrameRef.current = requestAnimationFrame(() =>
-      applyNodeMomentum(nodeId)
-    );
+    nodeAnimationFrameRef.current = requestAnimationFrame(() => applyNodeMomentum(nodeId));
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (
-      e.target === e.currentTarget ||
-      (e.target as SVGElement).tagName === "svg"
-    ) {
+    if (mode === "sphere") return;
+    if (e.target === e.currentTarget || (e.target as SVGElement).tagName === "svg") {
       setIsPanning(true);
       setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
       lastPosRef.current = { x: e.clientX, y: e.clientY, time: Date.now() };
       velocityRef.current = { x: 0, y: 0 };
-
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = null;
@@ -306,10 +221,10 @@ const SkillsGraph = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    if (mode === "sphere") return;
     if (isPanning) {
       const newPan = { x: e.clientX - panStart.x, y: e.clientY - panStart.y };
       setPan(newPan);
-
       const now = Date.now();
       const dt = now - lastPosRef.current.time;
       if (dt > 0) {
@@ -328,7 +243,7 @@ const SkillsGraph = () => {
         const x = e.clientX - rect.left - pan.x;
         const y = e.clientY - rect.top - pan.y;
 
-        setNodePositions((prev) => {
+        setNodePositions(prev => {
           const newMap = new Map(prev);
           newMap.set(draggedNode, { x: x - dragOffset.x, y: y - dragOffset.y });
           return newMap;
@@ -348,29 +263,19 @@ const SkillsGraph = () => {
   };
 
   const handleMouseUp = () => {
-    if (isPanning) {
-      if (
-        Math.abs(velocityRef.current.x) > 0.3 ||
-        Math.abs(velocityRef.current.y) > 0.3
-      ) {
-        applyMomentum();
-      }
+    if (mode === "sphere") return;
+    if (isPanning && (Math.abs(velocityRef.current.x) > 0.3 || Math.abs(velocityRef.current.y) > 0.3)) {
+      applyMomentum();
     }
-
-    if (draggedNode) {
-      if (
-        Math.abs(nodeVelocityRef.current.x) > 0.3 ||
-        Math.abs(nodeVelocityRef.current.y) > 0.3
-      ) {
-        applyNodeMomentum(draggedNode);
-      }
+    if (draggedNode && (Math.abs(nodeVelocityRef.current.x) > 0.3 || Math.abs(nodeVelocityRef.current.y) > 0.3)) {
+      applyNodeMomentum(draggedNode);
     }
-
     setIsPanning(false);
     setDraggedNode(null);
   };
 
   const handleNodeMouseDown = (e: React.MouseEvent, nodeId: string) => {
+    if (mode === "sphere") return;
     e.stopPropagation();
     const node = nodes.find((n) => n.id === nodeId);
     if (node) {
@@ -381,10 +286,8 @@ const SkillsGraph = () => {
         const x = e.clientX - rect.left - pan.x;
         const y = e.clientY - rect.top - pan.y;
         setDragOffset({ x: x - node.x, y: y - node.y });
-
         lastNodePosRef.current = { x, y, time: Date.now() };
         nodeVelocityRef.current = { x: 0, y: 0 };
-
         if (nodeAnimationFrameRef.current) {
           cancelAnimationFrame(nodeAnimationFrameRef.current);
           nodeAnimationFrameRef.current = null;
@@ -393,26 +296,106 @@ const SkillsGraph = () => {
     }
   };
 
-  const handleReset = () => {
-    setPan({ x: 0, y: 0 });
-    setNodePositions(
-      new Map(
-        initialNodes.map((node) => [
-          node.id,
-          { x: node.x * dimensions.width, y: node.y * dimensions.height },
-        ])
-      )
-    );
-    velocityRef.current = { x: 0, y: 0 };
-    nodeVelocityRef.current = { x: 0, y: 0 };
+  // --- Sphere Animation Logic ---
+  useEffect(() => {
+    let animationFrameId: number;
+    let prevTime = performance.now();
 
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
+    const loop = (time: number) => {
+      const dt = (time - prevTime) / 1000;
+      prevTime = time;
+
+      if (mode === "sphere") {
+        setSphereRotation(prev => {
+          let newX = prev.x;
+          let newY = prev.y;
+          
+          if (isAutoRotating) {
+            newX += (0 - prev.x) * dt * 2;
+            newY += 0.3 * dt;
+          } else {
+            newX += (targetRotation.x - prev.x) * dt * 5;
+            newY += (targetRotation.y - prev.y) * dt * 5;
+          }
+          return { x: newX, y: newY };
+        });
+      }
+      animationFrameId = requestAnimationFrame(loop);
+    };
+
+    if (mode === "sphere") {
+      animationFrameId = requestAnimationFrame(loop);
     }
-    if (nodeAnimationFrameRef.current) {
-      cancelAnimationFrame(nodeAnimationFrameRef.current);
-      nodeAnimationFrameRef.current = null;
+    
+    return () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
+  }, [mode, targetRotation, isAutoRotating]);
+
+  const handleSphereMouseMove = (e: React.MouseEvent) => {
+    if (mode === "graph") return;
+    if (!containerRef.current) return;
+    setIsAutoRotating(false);
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setTargetRotation({ x: y * 3, y: x * 3 });
+  };
+
+  const handleSphereMouseLeave = () => {
+    if (mode === "graph") return;
+    setIsAutoRotating(true);
+  };
+
+  const getSphereNodes = () => {
+    const N = initialNodes.length;
+    const sphereRadius = Math.min(dimensions.width, dimensions.height) * 0.35;
+
+    return initialNodes.map((node, i) => {
+      const phi = Math.acos(1 - 2 * (i + 0.5) / N);
+      const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+      
+      let x = Math.cos(theta) * Math.sin(phi);
+      let y = Math.sin(theta) * Math.sin(phi);
+      let z = Math.cos(phi);
+
+      const rx = sphereRotation.x;
+      const ry = sphereRotation.y;
+
+      let y1 = y * Math.cos(rx) - z * Math.sin(rx);
+      let z1 = y * Math.sin(rx) + z * Math.cos(rx);
+      
+      let x2 = x * Math.cos(ry) + z1 * Math.sin(ry);
+      let z2 = -x * Math.sin(ry) + z1 * Math.cos(ry);
+      let y2 = y1;
+
+      const scale = 250 / (250 + z2 * 100);
+      const xProj = (x2 * sphereRadius * scale) + (dimensions.width / 2);
+      const yProj = (y2 * sphereRadius * scale) + (dimensions.height / 2);
+      
+      const alpha = Math.min(1, Math.max(0.1, (z2 + 1.5) / 2.5));
+
+      return {
+        ...node,
+        xProj,
+        yProj,
+        scale,
+        alpha,
+        z: z2
+      };
+    }).sort((a, b) => b.z - a.z);
+  };
+
+  const handleReset = () => {
+    if (mode === "graph") {
+      setPan({ x: 0, y: 0 });
+      setNodePositions(
+        new Map(initialNodes.map((node) => [node.id, { x: node.x * dimensions.width, y: node.y * dimensions.height }]))
+      );
+      velocityRef.current = { x: 0, y: 0 };
+      nodeVelocityRef.current = { x: 0, y: 0 };
+    } else {
+      setSphereRotation({ x: 0, y: 0 });
     }
   };
 
@@ -422,145 +405,173 @@ const SkillsGraph = () => {
   const fontSize = isMobile ? 10 : 12;
   const coreFontSize = isMobile ? 12 : 14;
 
+  const sphereNodes = mode === "sphere" ? getSphereNodes() : [];
+
   return (
     <div className="w-full my-16">
-      <div className="flex justify-between items-center mb-6 md:mb-8">
-        <h2 className="text-2xl md:text-3xl font-extrabold text-white font-mono">
-          <span className="text-gray-500">## </span>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
+        <h2 className="text-2xl md:text-3xl font-extrabold text-white font-mono flex items-center">
+          <span className="text-gray-500 mr-2">## </span>
           skills network
           <span className="text-gray-500 text-sm md:text-lg ml-2 hidden sm:inline">
-            (interactive graph)
+            ({mode === "graph" ? "interactive graph" : "3d orbit"})
           </span>
         </h2>
-        <button
-          onClick={handleReset}
-          className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-600 rounded font-mono text-xs md:text-sm transition-all"
-        >
-          Reset
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setMode(mode === "graph" ? "sphere" : "graph")}
+            className="px-3 py-1.5 md:px-4 md:py-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/50 rounded font-mono text-xs md:text-sm transition-all"
+          >
+            {mode === "graph" ? "View 3D Sphere" : "View 2D Graph"}
+          </button>
+          <button
+            onClick={handleReset}
+            className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-600 rounded font-mono text-xs md:text-sm transition-all"
+          >
+            Reset
+          </button>
+        </div>
       </div>
 
       <div
         ref={containerRef}
-        className="relative w-full bg-[#1a1a1a] border border-gray-700 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing"
+        className={`relative w-full bg-[#1a1a1a] border border-gray-700 rounded-lg overflow-hidden ${mode === "graph" ? "cursor-grab active:cursor-grabbing" : "cursor-crosshair"}`}
         style={{ height: `${dimensions.height}px` }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onMouseDown={mode === "graph" ? handleMouseDown : undefined}
+        onMouseMove={mode === "graph" ? handleMouseMove : handleSphereMouseMove}
+        onMouseUp={mode === "graph" ? handleMouseUp : undefined}
+        onMouseLeave={mode === "graph" ? handleMouseUp : handleSphereMouseLeave}
       >
-        <svg
-          width={dimensions.width}
-          height={dimensions.height}
-          className="w-full h-full"
-          viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <g
-            transform={`translate(${pan.x}, ${pan.y})`}
-            style={{
-              transition:
-                isPanning || draggedNode ? "none" : "transform 0.1s ease-out",
-            }}
+        {mode === "graph" ? (
+          <svg
+            width={dimensions.width}
+            height={dimensions.height}
+            className="w-full h-full"
+            viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
+            preserveAspectRatio="xMidYMid meet"
           >
-            <g className="edges">
-              {edges.map((edge, idx) => {
-                const fromNode = nodes.find((n) => n.id === edge.from);
-                const toNode = nodes.find((n) => n.id === edge.to);
-                if (!fromNode || !toNode) return null;
+            <g
+              transform={`translate(${pan.x}, ${pan.y})`}
+              style={{ transition: isPanning || draggedNode ? "none" : "transform 0.1s ease-out" }}
+            >
+              <g className="edges">
+                {edges.map((edge, idx) => {
+                  const fromNode = nodes.find((n) => n.id === edge.from);
+                  const toNode = nodes.find((n) => n.id === edge.to);
+                  if (!fromNode || !toNode) return null;
 
-                const isActive = isEdgeConnected(edge);
-                return (
-                  <line
-                    key={idx}
-                    x1={fromNode.x}
-                    y1={fromNode.y}
-                    x2={toNode.x}
-                    y2={toNode.y}
-                    stroke={isActive ? "#00ff00" : "#333333"}
-                    strokeWidth={isActive ? 2 : 1}
-                    opacity={isActive ? 0.6 : 0.2}
-                    className="transition-all duration-300 pointer-events-none"
-                  />
-                );
-              })}
-            </g>
+                  const isActive = isEdgeConnected(edge);
+                  return (
+                    <line
+                      key={idx}
+                      x1={fromNode.x}
+                      y1={fromNode.y}
+                      x2={toNode.x}
+                      y2={toNode.y}
+                      stroke={isActive ? "#00ff00" : "#333333"}
+                      strokeWidth={isActive ? 2 : 1}
+                      opacity={isActive ? 0.6 : 0.2}
+                      className="transition-all duration-300 pointer-events-none"
+                    />
+                  );
+                })}
+              </g>
 
-            <g className="nodes">
-              {nodes.map((node) => {
-                const isActive = isNodeConnected(node.id);
-                const isCoreNode = node.category === "core";
-                const radius = isCoreNode ? coreRadius : baseRadius;
-                const color = getCategoryColor(node.category);
+              <g className="nodes">
+                {nodes.map((node) => {
+                  const isActive = isNodeConnected(node.id);
+                  const isCoreNode = node.category === "core";
+                  const radius = isCoreNode ? coreRadius : baseRadius;
+                  const color = getCategoryColor(node.category);
 
-                return (
-                  <g
-                    key={node.id}
-                    onMouseEnter={() => setHoveredNode(node.id)}
-                    onMouseLeave={() => setHoveredNode(null)}
-                    onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                    onTouchStart={() => setHoveredNode(node.id)}
-                    className="cursor-move transition-opacity duration-300"
-                    style={{ opacity: isActive ? 1 : 0.3 }}
-                  >
-                    {hoveredNode === node.id && (
+                  return (
+                    <g
+                      key={node.id}
+                      onMouseEnter={() => setHoveredNode(node.id)}
+                      onMouseLeave={() => setHoveredNode(null)}
+                      onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
+                      onTouchStart={() => setHoveredNode(node.id)}
+                      className="cursor-move transition-opacity duration-300"
+                      style={{ opacity: isActive ? 1 : 0.3 }}
+                    >
+                      {hoveredNode === node.id && (
+                        <circle
+                          cx={node.x}
+                          cy={node.y}
+                          r={radius + 8}
+                          fill={color}
+                          opacity={0.2}
+                          className="animate-pulse pointer-events-none"
+                        />
+                      )}
                       <circle
                         cx={node.x}
                         cy={node.y}
-                        r={radius + 8}
-                        fill={color}
-                        opacity={0.2}
-                        className="animate-pulse pointer-events-none"
+                        r={radius}
+                        fill={hoveredNode === node.id ? color : "#1a1a1a"}
+                        stroke={color}
+                        strokeWidth={2}
                       />
-                    )}
-
-                    <circle
-                      cx={node.x}
-                      cy={node.y}
-                      r={radius}
-                      fill={hoveredNode === node.id ? color : "#1a1a1a"}
-                      stroke={color}
-                      strokeWidth={2}
-                    />
-
-                    <rect
-                      x={
-                        node.x -
-                        (node.label.length *
-                          (isCoreNode ? coreFontSize : fontSize)) /
-                          2.5
-                      }
-                      y={node.y + radius + (isMobile ? 5 : 10)}
-                      width={
-                        node.label.length *
-                        (isCoreNode ? coreFontSize : fontSize) *
-                        0.65
-                      }
-                      height={isCoreNode ? coreFontSize + 6 : fontSize + 6}
-                      fill="#0a0a0a"
-                      opacity={0.85}
-                      rx={3}
-                      className="pointer-events-none"
-                    />
-
-                    <text
-                      x={node.x - radius / 2}
-                      y={node.y + radius + (isMobile ? 15 : 20)}
-                      textAnchor="middle"
-                      fill={hoveredNode === node.id ? color : "#888888"}
-                      fontSize={isCoreNode ? coreFontSize : fontSize}
-                      fontWeight={isCoreNode ? "bold" : "normal"}
-                      className="font-mono transition-all duration-300 select-none pointer-events-none"
-                    >
-                      {node.label}
-                    </text>
-                  </g>
-                );
-              })}
+                      <rect
+                        x={node.x - (node.label.length * (isCoreNode ? coreFontSize : fontSize)) / 2.5}
+                        y={node.y + radius + (isMobile ? 5 : 10)}
+                        width={node.label.length * (isCoreNode ? coreFontSize : fontSize) * 0.65}
+                        height={isCoreNode ? coreFontSize + 6 : fontSize + 6}
+                        fill="#0a0a0a"
+                        opacity={0.85}
+                        rx={3}
+                        className="pointer-events-none"
+                      />
+                      <text
+                        x={node.x - radius / 2}
+                        y={node.y + radius + (isMobile ? 15 : 20)}
+                        textAnchor="middle"
+                        fill={hoveredNode === node.id ? color : "#888888"}
+                        fontSize={isCoreNode ? coreFontSize : fontSize}
+                        fontWeight={isCoreNode ? "bold" : "normal"}
+                        className="font-mono transition-all duration-300 select-none pointer-events-none"
+                      >
+                        {node.label}
+                      </text>
+                    </g>
+                  );
+                })}
+              </g>
             </g>
-          </g>
-        </svg>
+          </svg>
+        ) : (
+          <div className="w-full h-full relative perspective-[1000px]">
+            {sphereNodes.map((node) => {
+              const isCoreNode = node.category === "core";
+              const color = getCategoryColor(node.category);
+              const nodeFontSize = (isCoreNode ? coreFontSize + 4 : fontSize + 4) * node.scale;
+              const isHovered = hoveredNode === node.id;
+              
+              return (
+                <div
+                  key={node.id}
+                  onMouseEnter={() => setHoveredNode(node.id)}
+                  onMouseLeave={() => setHoveredNode(null)}
+                  className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-colors duration-300 cursor-pointer flex items-center justify-center font-mono whitespace-nowrap"
+                  style={{
+                    left: `${node.xProj}px`,
+                    top: `${node.yProj}px`,
+                    opacity: isHovered ? 1 : node.alpha,
+                    zIndex: Math.round((node.z + 2) * 100),
+                    fontSize: `${nodeFontSize}px`,
+                    color: isHovered ? "#fff" : color,
+                    textShadow: isHovered ? `0 0 10px ${color}` : "none",
+                    fontWeight: isCoreNode || isHovered ? "bold" : "normal",
+                  }}
+                >
+                  {node.label}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
+        {/* Legend */}
         <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 font-mono text-[10px] md:text-xs space-y-1 pointer-events-none">
           <div className="flex items-center gap-1 md:gap-2">
             <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#00ff00]"></div>
@@ -581,8 +592,17 @@ const SkillsGraph = () => {
         </div>
 
         <div className="absolute top-2 md:top-4 right-2 md:right-4 font-mono text-[10px] md:text-xs text-gray-500 text-right pointer-events-none">
-          <div>Drag nodes to move</div>
-          <div>Drag canvas to pan</div>
+          {mode === "graph" ? (
+            <>
+              <div>Drag nodes to move</div>
+              <div>Drag canvas to pan</div>
+            </>
+          ) : (
+            <>
+              <div>Move mouse to rotate</div>
+              <div>Hover to highlight</div>
+            </>
+          )}
         </div>
       </div>
     </div>
