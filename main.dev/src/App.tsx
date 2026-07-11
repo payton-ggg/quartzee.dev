@@ -1,31 +1,17 @@
-import { useState, useEffect } from "react";
 import {
   About,
   AnimatedTitle,
   FontSelector,
   KyivClock,
   CVFolder,
-  SnowEffect,
   MusicPlayer,
-  LoadingScreen,
 } from "./components";
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 7000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="min-h-screen text-white font-mono flex flex-col justify-center items-center">
-      <LoadingScreen isLoading={isLoading} />
       <FontSelector />
-      <MusicPlayer onReady={() => setIsLoading(false)} />
+      <MusicPlayer />
       <KyivClock />
       <CVFolder />
       <AnimatedTitle />
