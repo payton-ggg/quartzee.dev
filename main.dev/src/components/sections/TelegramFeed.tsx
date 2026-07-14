@@ -69,7 +69,7 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
 };
 
 const TelegramFeed = () => {
-  const { posts, loading, error } = useTelegramFeed("PhilosophDiferent");
+  const { posts, loading, error, isFallback } = useTelegramFeed("PhilosophDiferent");
   const [visibleCount, setVisibleCount] = useState(6);
 
   const visiblePosts = posts.slice(0, visibleCount);
@@ -96,6 +96,23 @@ const TelegramFeed = () => {
       {error && (
         <div className="text-red-500 border border-red-500/30 p-4 rounded bg-red-500/10 my-12 w-full max-w-md text-center text-sm">
           [ERROR]: Failed to intercept signal ({error})
+        </div>
+      )}
+
+      {isFallback && !loading && !error && (
+        <div className="text-yellow-500/80 border border-yellow-500/20 p-4 rounded bg-yellow-500/5 mb-8 w-full max-w-2xl text-center text-xs tracking-wider uppercase font-mono flex flex-col sm:flex-row items-center justify-between gap-3 backdrop-blur-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+            <span>[SECURE SIGNAL CACHE]: LIVE SIGNAL SCRAMBLED / OFFLINE BACKUP RENDERED</span>
+          </div>
+          <a
+            href="https://t.me/PhilosophDiferent"
+            target="_blank"
+            rel="noreferrer"
+            className="text-yellow-400 hover:text-yellow-300 underline underline-offset-4 font-bold"
+          >
+            Direct Link
+          </a>
         </div>
       )}
 
