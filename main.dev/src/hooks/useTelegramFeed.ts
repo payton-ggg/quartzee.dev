@@ -55,56 +55,26 @@ export function useTelegramFeed(channelName: string) {
       setError(null);
       setIsFallback(false);
 
-      const targetUrl = `https://t.me/s/${channelName}`;
-      let htmlContent = "";
-      let lastError: any = null;
-
-      // List of CORS proxies to try in order
-      const PROXIES = [
-        {
-          name: "allorigins_json",
-          getUrl: (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url + "?_=" + Date.now())}`,
-          parse: async (res: Response) => {
-            const data = await res.json();
-            if (!data || typeof data.contents !== "string") {
-              throw new Error("Invalid allorigins format");
-            }
-            return data.contents;
-          }
-        },
-        {
-          name: "corsproxy.io",
-          getUrl: (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url + "?_=" + Date.now())}`,
-          parse: async (res: Response) => res.text()
-        },
-        {
-          name: "cors.lol",
-          getUrl: (url: string) => `https://api.cors.lol/?url=${encodeURIComponent(url + "?_=" + Date.now())}`,
-          parse: async (res: Response) => res.text()
-        },
-        {
-          name: "codetabs",
-          getUrl: (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url + "?_=" + Date.now())}`,
-          parse: async (res: Response) => res.text()
-        }
+      const RSSHUB_INSTANCES = [
+        "https://rsshub.rssforever.com",
+        "https://rsshub.moeyy.cn",
+        "https://rsshub.pseudoyu.com",
+        "https://rsshub.app"
       ];
 
-      for (const proxy of PROXIES) {
+      let data: any = null;
+
+      for (const instance of RSSHUB_INSTANCES) {
         if (!isMounted) return;
         try {
-          console.log(`[TelegramFeed] Trying proxy: ${proxy.name}`);
-          const proxyUrl = proxy.getUrl(targetUrl);
+          console.log(`[TelegramFeed] Trying RSSHub instance: ${instance}`);
+          const url = `${instance}/telegram/channel/${channelName}?format=json`;
           
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 6000);
           
-          const response = await fetch(proxyUrl, {
+          const response = await fetch(url, {
             signal: controller.signal,
-            cache: 'no-store',
-            headers: {
-              'Cache-Control': 'no-cache',
-              'Pragma': 'no-cache'
-            }
           });
           
           clearTimeout(timeoutId);
@@ -113,27 +83,20 @@ export function useTelegramFeed(channelName: string) {
             throw new Error(`HTTP ${response.status}`);
           }
           
-          const content = await proxy.parse(response);
-          if (!content) {
-            throw new Error("Empty response");
+          data = await response.json();
+          if (!data || !data.items) {
+            throw new Error("Invalid RSSHub format");
           }
           
-          // Verify it's a valid Telegram page
-          if (!content.includes("tgme_widget_message") && !content.includes("tgme_channel_info")) {
-            throw new Error("Not a valid Telegram page content");
-          }
-          
-          htmlContent = content;
-          console.log(`[TelegramFeed] Success with proxy: ${proxy.name}`);
-          break; // Exit the loop on success!
+          console.log(`[TelegramFeed] Success with RSSHub instance: ${instance}`);
+          break; // Exit the loop on success
         } catch (err: any) {
-          console.warn(`[TelegramFeed] Proxy ${proxy.name} failed:`, err.message || err);
-          lastError = err;
+          console.warn(`[TelegramFeed] RSSHub instance ${instance} failed:`, err.message || err);
         }
       }
 
-      if (!htmlContent) {
-        console.warn("[TelegramFeed] All live proxies failed. Loading offline backup archive.");
+      if (!data || !data.items) {
+        console.warn("[TelegramFeed] All RSSHub instances failed. Loading offline backup archive.");
         if (isMounted) {
           setPosts(MOCK_POSTS);
           setIsFallback(true);
@@ -143,56 +106,42 @@ export function useTelegramFeed(channelName: string) {
       }
 
       try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, "text/html");
-
-        const messageNodes = doc.querySelectorAll(".tgme_widget_message_wrap");
         const parsedPosts: TelegramPost[] = [];
 
-        messageNodes.forEach((node, index) => {
-          // Skip if it is a service message (like channel created)
-          if (node.querySelector(".tgme_widget_message_service")) return;
-
-          const textNode = node.querySelector(".tgme_widget_message_text");
-          const photoNode = node.querySelector(".tgme_widget_message_photo_wrap");
-          const videoNode = node.querySelector(".tgme_widget_message_video");
-          const dateNode = node.querySelector(".tgme_widget_message_date time");
+        data.items.forEach((item: any, index: number) => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(item.content_html || "", "text/html");
 
           let text = "";
-          if (textNode) {
-            text = textNode.innerHTML;
-          }
-
           let photoUrl = undefined;
-          if (photoNode) {
-            const style = photoNode.getAttribute("style");
-            if (style) {
-              const match = style.match(/background-image:url\('([^']+)'\)/);
-              if (match) {
-                photoUrl = match[1];
-              }
-            }
-          }
-
           let videoUrl = undefined;
+
+          // RSSHub telegram usually puts images as <img> tags
+          const imgNode = doc.querySelector("img");
+          if (imgNode) {
+            photoUrl = imgNode.getAttribute("src") || undefined;
+            imgNode.remove();
+          }
+
+          // And videos as <video> tags
+          const videoNode = doc.querySelector("video");
           if (videoNode) {
-            const src = videoNode.getAttribute("src");
-            if (src) videoUrl = src;
+            videoUrl = videoNode.getAttribute("src") || undefined;
+            videoNode.remove();
           }
 
-          let date = new Date().toISOString();
-          if (dateNode) {
-            date = dateNode.getAttribute("datetime") || date;
-          }
+          text = doc.body.innerHTML.trim();
 
-          // Only add if there is some content
+          // Ignore empty or service messages
+          if (text === "Channel photo removed" || text === "Channel created") text = "";
+
           if (text || photoUrl || videoUrl) {
             parsedPosts.push({
-              id: `post-${index}`,
+              id: item.id || item.url || `post-${index}`,
               text,
               photoUrl,
               videoUrl,
-              date,
+              date: item.date_published || new Date().toISOString(),
             });
           }
         });
@@ -200,16 +149,16 @@ export function useTelegramFeed(channelName: string) {
         if (!isMounted) return;
 
         if (parsedPosts.length === 0) {
-          // If no posts are parsed, fall back to mock posts
-          console.warn("[TelegramFeed] No posts parsed from live HTML. Loading backup archive.");
+          console.warn("[TelegramFeed] No posts parsed from RSSHub. Loading backup archive.");
           setPosts(MOCK_POSTS);
           setIsFallback(true);
         } else {
-          setPosts(parsedPosts.reverse());
+          // RSSHub returns newest first
+          setPosts(parsedPosts);
           setIsFallback(false);
         }
       } catch (err: any) {
-        console.error("[TelegramFeed] Error parsing feed:", err);
+        console.error("[TelegramFeed] Error parsing RSSHub feed:", err);
         if (isMounted) {
           setPosts(MOCK_POSTS);
           setIsFallback(true);
