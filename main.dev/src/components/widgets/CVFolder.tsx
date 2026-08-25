@@ -23,7 +23,7 @@ const CVFolder = () => {
 
   return (
     <a
-      href="https://drive.google.com/file/d/1nCBAdE6p9fgz-L3nr-J5Va0BEWs3dEYo/view?usp=sharing"
+      href="https://drive.google.com/file/d/1nryVpwvTmvS8rdpXSZ0R6kGWkJ97Q9Wi/view?usp=sharing"
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-8 right-8 z-50 group perspective-[1000px]"
