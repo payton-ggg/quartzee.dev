@@ -117,7 +117,7 @@ const TelegramFeed = () => {
       )}
 
       {isFallback && !loading && !error && (
-        <div className="text-yellow-400/90 border border-yellow-500/20 p-2.5 rounded-xl bg-yellow-500/5 mb-3 text-center text-xs font-mono flex items-center justify-between gap-2 backdrop-blur-md">
+        <div className="text-yellow-400/90 border border-yellow-500/20 p-2.5 rounded-xl bg-[#1a1708] mb-3 text-center text-xs font-mono flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
             <span className="text-[11px] sm:text-xs">
@@ -145,7 +145,7 @@ const TelegramFeed = () => {
           {visiblePosts.map((post) => (
             <div
               key={post.id}
-              className="bg-black/50 border border-white/10 rounded-xl p-4 flex flex-col gap-3 backdrop-blur-xl transition-all duration-300 hover:border-green-500/40 hover:shadow-[0_0_15px_rgba(34,197,94,0.12)] group relative overflow-hidden"
+              className="bg-[#111317]/95 border border-white/10 rounded-xl p-4 flex flex-col gap-3 transition-all duration-300 hover:border-green-500/40 hover:shadow-[0_0_15px_rgba(34,197,94,0.12)] group relative overflow-hidden"
             >
               <div className="text-[11px] font-mono text-gray-500 flex justify-between items-center border-b border-white/5 pb-2.5 relative z-10">
                 <span className="flex items-center gap-2">
@@ -163,7 +163,7 @@ const TelegramFeed = () => {
               </div>
 
               {post.photoUrl && (
-                <div className="relative w-full rounded-lg overflow-hidden bg-black/50 border border-white/5 z-10 max-h-[220px]">
+                <div className="relative w-full rounded-lg overflow-hidden bg-black border border-white/5 z-10 max-h-[220px]">
                   <img
                     src={post.photoUrl}
                     alt="Telegram post media"
@@ -192,7 +192,7 @@ const TelegramFeed = () => {
           <div className="mt-4 flex justify-center pb-2">
             <button
               onClick={loadMore}
-              className="px-5 py-2 border border-white/10 hover:border-green-500/40 text-gray-300 hover:text-white rounded-lg bg-black/40 backdrop-blur-md transition-all text-xs font-mono font-bold"
+              className="px-5 py-2 border border-white/10 hover:border-green-500/40 text-gray-300 hover:text-white rounded-lg bg-[#111317] transition-all text-xs font-mono font-bold"
             >
               LOAD MORE TRANSMISSIONS
             </button>

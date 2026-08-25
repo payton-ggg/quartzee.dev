@@ -24,14 +24,14 @@ const Contact: React.FC = () => {
           </h2>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-xs text-green-400 bg-green-500/10 border border-green-500/30 px-3 py-1.5 rounded-lg backdrop-blur-md self-start sm:self-auto">
+        <div className="flex items-center gap-2 font-mono text-xs text-green-400 bg-green-500/10 border border-green-500/30 px-3 py-1.5 rounded-lg self-start sm:self-auto">
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           <span>OPEN FOR OPPORTUNITIES</span>
         </div>
       </div>
 
       {/* Main Glass Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 bg-black/50 border border-white/10 rounded-2xl p-5 md:p-6 backdrop-blur-xl shadow-2xl">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 bg-[#111317]/95 border border-white/10 rounded-2xl p-5 md:p-6 shadow-2xl">
         {/* Left column: Direct Message Form */}
         <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
           <div className="text-xs uppercase tracking-widest text-gray-400 font-mono font-bold">

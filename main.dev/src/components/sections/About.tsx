@@ -12,7 +12,7 @@ const About: React.FC<AboutProps> = ({ onScrollDown }) => {
     <div className="w-full max-w-5xl mx-auto flex flex-col justify-center min-h-[85vh] py-6 px-4 md:px-8">
       {/* Header Badge */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-mono flex items-center gap-2 backdrop-blur-md">
+        <div className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-mono flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           <span>FULLSTACK ENGINEER // AVAILABLE</span>
         </div>
@@ -34,7 +34,7 @@ const About: React.FC<AboutProps> = ({ onScrollDown }) => {
       </div>
 
       {/* Glassmorphic Summary Card */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-black/40 border border-white/10 rounded-2xl p-5 md:p-7 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-[#111317]/95 border border-white/10 rounded-2xl p-5 md:p-7 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
         {/* Left column: Bio */}
         <div className="lg:col-span-7 space-y-4 font-mono text-sm sm:text-base text-gray-300 leading-relaxed border-b lg:border-b-0 lg:border-r border-white/10 pb-4 lg:pb-0 lg:pr-6">
           <div className="text-xs uppercase tracking-widest text-green-400 font-bold flex items-center gap-2">

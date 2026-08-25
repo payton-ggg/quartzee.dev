@@ -21,6 +21,9 @@ body {
   font-size: 16px;
   line-height: 1.6;
   user-select: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
 }
 
 /* Slim Glass Custom Scrollbar */

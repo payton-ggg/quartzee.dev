@@ -34,7 +34,7 @@ export const FullpageNavigation: React.FC<FullpageNavigationProps> = ({
       {/* Floating Side Dots Navigation */}
       <nav
         aria-label="Section Navigation"
-        className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-4 py-4 px-2 rounded-full bg-black/40 border border-white/10 backdrop-blur-md shadow-2xl transition-all"
+        className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-4 py-4 px-2 rounded-full bg-[#111317]/95 border border-white/10 shadow-2xl transition-all"
       >
         {sections.map((sec, idx) => {
           const isActive = currentSection === idx;

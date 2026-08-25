@@ -192,7 +192,7 @@ const ExperienceSection = () => {
         </div>
 
         {/* Company Switcher Tabs */}
-        <div className="flex items-center gap-2 p-1 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md">
+        <div className="flex items-center gap-2 p-1 rounded-xl bg-[#111317] border border-white/10">
           {experiences.map((exp, idx) => {
             const isActive = activeCompanyIdx === idx;
             return (
@@ -216,7 +216,7 @@ const ExperienceSection = () => {
       </div>
 
       {/* Main Experience Glass Container */}
-      <div className="bg-black/50 border border-white/10 rounded-2xl p-5 md:p-7 backdrop-blur-xl shadow-2xl flex flex-col max-h-[68vh] relative overflow-hidden">
+      <div className="bg-[#111317]/95 border border-white/10 rounded-2xl p-5 md:p-7 shadow-2xl flex flex-col max-h-[68vh] relative overflow-hidden">
         {/* Company Info Banner */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10 mb-4">
           <div className="flex items-center gap-3">

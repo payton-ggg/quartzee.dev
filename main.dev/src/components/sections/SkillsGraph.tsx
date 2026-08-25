@@ -514,7 +514,7 @@ const SkillsGraph = () => {
         const xProj = x2 * sphereRadius * scale + dimensions.width / 2;
         const yProj = y2 * sphereRadius * scale + dimensions.height / 2;
 
-        const alpha = Math.min(1, Math.max(0.1, (z2 + 1.5) / 2.5));
+        const alpha = Math.min(1, Math.max(0.7, (z2 + 1.8) / 2.2));
 
         return {
           ...node,
@@ -582,7 +582,7 @@ const SkillsGraph = () => {
 
       <div
         ref={containerRef}
-        className={`relative w-full bg-black/50 border border-white/10 rounded-2xl backdrop-blur-xl shadow-2xl overflow-hidden ${mode === "graph" ? "cursor-grab active:cursor-grabbing" : "cursor-crosshair"}`}
+        className={`relative w-full bg-[#111317]/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden ${mode === "graph" ? "cursor-grab active:cursor-grabbing" : "cursor-crosshair"}`}
         style={{ height: `${dimensions.height}px` }}
         onMouseDown={mode === "graph" ? handleMouseDown : undefined}
         onMouseMove={mode === "graph" ? handleMouseMove : handleSphereMouseMove}
@@ -620,7 +620,7 @@ const SkillsGraph = () => {
                       y2={toNode.y}
                       stroke={isActive ? "#00ff00" : "#333333"}
                       strokeWidth={isActive ? 2 : 1}
-                      opacity={isActive ? 0.6 : 0.2}
+                      opacity={isActive ? 0.8 : 0.3}
                       className="transition-all duration-300 pointer-events-none"
                     />
                   );
@@ -642,16 +642,16 @@ const SkillsGraph = () => {
                       onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
                       onTouchStart={() => setHoveredNode(node.id)}
                       className="cursor-move transition-opacity duration-300"
-                      style={{ opacity: isActive ? 1 : 0.3 }}
+                      style={{ opacity: isActive ? 1 : 0.6 }}
                     >
                       {hoveredNode === node.id && (
                         <circle
                           cx={node.x}
                           cy={node.y}
-                          r={radius + 8}
+                          r={radius + 6}
                           fill={color}
-                          opacity={0.2}
-                          className="animate-pulse pointer-events-none"
+                          opacity={0.25}
+                          className="pointer-events-none"
                         />
                       )}
                       <circle
@@ -677,7 +677,7 @@ const SkillsGraph = () => {
                         }
                         height={isCoreNode ? coreFontSize + 6 : fontSize + 6}
                         fill="#0a0a0a"
-                        opacity={0.85}
+                        opacity={0.95}
                         rx={3}
                         className="pointer-events-none"
                       />
@@ -685,10 +685,10 @@ const SkillsGraph = () => {
                         x={node.x - radius / 2}
                         y={node.y + radius + (isMobile ? 15 : 20)}
                         textAnchor="middle"
-                        fill={hoveredNode === node.id ? color : "#888888"}
+                        fill={hoveredNode === node.id ? "#ffffff" : color}
                         fontSize={isCoreNode ? coreFontSize : fontSize}
-                        fontWeight={isCoreNode ? "bold" : "normal"}
-                        className="font-mono transition-all duration-300 select-none pointer-events-none"
+                        fontWeight={isCoreNode ? "bold" : "600"}
+                        className="font-mono transition-colors duration-200 select-none pointer-events-none"
                       >
                         {node.label}
                       </text>
@@ -712,16 +712,15 @@ const SkillsGraph = () => {
                   key={node.id}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => setHoveredNode(null)}
-                  className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-colors duration-300 cursor-pointer flex items-center justify-center font-mono whitespace-nowrap"
+                  className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-colors duration-200 cursor-pointer flex items-center justify-center font-mono whitespace-nowrap"
                   style={{
                     left: `${node.xProj}px`,
                     top: `${node.yProj}px`,
                     opacity: isHovered ? 1 : node.alpha,
                     zIndex: Math.round((node.z + 2) * 100),
                     fontSize: `${nodeFontSize}px`,
-                    color: isHovered ? "#fff" : color,
-                    textShadow: isHovered ? `0 0 10px ${color}` : "none",
-                    fontWeight: isCoreNode || isHovered ? "bold" : "normal",
+                    color: isHovered ? "#ffffff" : color,
+                    fontWeight: isCoreNode || isHovered ? "bold" : "600",
                   }}
                 >
                   {node.label}
