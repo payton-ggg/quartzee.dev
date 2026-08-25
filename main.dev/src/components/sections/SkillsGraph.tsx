@@ -43,7 +43,7 @@ const SkillsGraph = () => {
     const updateDimensions = () => {
       if (containerRef.current) {
         const width = containerRef.current.offsetWidth;
-        const height = Math.min(600, Math.max(400, width * 0.75));
+        const height = Math.min(520, Math.max(340, width * 0.58));
         setDimensions({ width, height });
       }
     };
@@ -55,59 +55,148 @@ const SkillsGraph = () => {
 
   useEffect(() => {
     return () => {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-      if (nodeAnimationFrameRef.current) cancelAnimationFrame(nodeAnimationFrameRef.current);
+      if (animationFrameRef.current)
+        cancelAnimationFrame(animationFrameRef.current);
+      if (nodeAnimationFrameRef.current)
+        cancelAnimationFrame(nodeAnimationFrameRef.current);
     };
   }, []);
 
   const initialNodes: Node[] = [
     { id: "fullstack", label: "Full Stack", x: 0.5, y: 0.46, category: "core" },
-    { id: "typescript", label: "TypeScript", x: 0.40, y: 0.28, category: "core" },
-    { id: "golang", label: "Go", x: 0.60, y: 0.28, category: "core" },
-    { id: "javascript", label: "JavaScript", x: 0.44, y: 0.16, category: "core" },
+    {
+      id: "typescript",
+      label: "TypeScript",
+      x: 0.4,
+      y: 0.28,
+      category: "core",
+    },
+    { id: "golang", label: "Go", x: 0.6, y: 0.28, category: "core" },
+    {
+      id: "javascript",
+      label: "JavaScript",
+      x: 0.44,
+      y: 0.16,
+      category: "core",
+    },
     { id: "sql", label: "SQL", x: 0.56, y: 0.64, category: "core" },
 
     { id: "react", label: "React.js", x: 0.22, y: 0.22, category: "frontend" },
     { id: "nextjs", label: "Next.js", x: 0.28, y: 0.38, category: "frontend" },
-    { id: "tailwind", label: "Tailwind CSS", x: 0.14, y: 0.36, category: "frontend" },
+    {
+      id: "tailwind",
+      label: "Tailwind CSS",
+      x: 0.14,
+      y: 0.36,
+      category: "frontend",
+    },
     { id: "zustand", label: "Zustand", x: 0.09, y: 0.22, category: "frontend" },
-    { id: "hookform", label: "Hook Form", x: 0.20, y: 0.52, category: "frontend" },
-    { id: "vuejs", label: "Vue.js", x: 0.10, y: 0.60, category: "frontend" },
-    { id: "contextapi", label: "Context API", x: 0.28, y: 0.56, category: "frontend" },
+    {
+      id: "hookform",
+      label: "Hook Form",
+      x: 0.2,
+      y: 0.52,
+      category: "frontend",
+    },
+    { id: "vuejs", label: "Vue.js", x: 0.1, y: 0.6, category: "frontend" },
+    {
+      id: "contextapi",
+      label: "Context API",
+      x: 0.28,
+      y: 0.56,
+      category: "frontend",
+    },
 
     { id: "nestjs", label: "NestJS", x: 0.78, y: 0.22, category: "backend" },
-    { id: "nodejs", label: "Node.js", x: 0.70, y: 0.36, category: "backend" },
-    { id: "express", label: "Express.js", x: 0.88, y: 0.30, category: "backend" },
-    { id: "restapi", label: "REST APIs", x: 0.82, y: 0.44, category: "backend" },
+    { id: "nodejs", label: "Node.js", x: 0.7, y: 0.36, category: "backend" },
+    {
+      id: "express",
+      label: "Express.js",
+      x: 0.88,
+      y: 0.3,
+      category: "backend",
+    },
+    {
+      id: "restapi",
+      label: "REST APIs",
+      x: 0.82,
+      y: 0.44,
+      category: "backend",
+    },
     { id: "jwt", label: "JWT Auth", x: 0.72, y: 0.52, category: "backend" },
-    { id: "postgres", label: "PostgreSQL", x: 0.68, y: 0.70, category: "backend" },
-    { id: "mongodb", label: "MongoDB", x: 0.84, y: 0.60, category: "backend" },
+    {
+      id: "postgres",
+      label: "PostgreSQL",
+      x: 0.68,
+      y: 0.7,
+      category: "backend",
+    },
+    { id: "mongodb", label: "MongoDB", x: 0.84, y: 0.6, category: "backend" },
 
     { id: "docker", label: "Docker", x: 0.62, y: 0.85, category: "tools" },
-    { id: "actions", label: "GitHub Actions", x: 0.48, y: 0.85, category: "tools" },
+    {
+      id: "actions",
+      label: "GitHub Actions",
+      x: 0.48,
+      y: 0.85,
+      category: "tools",
+    },
     { id: "gcp", label: "GCP", x: 0.76, y: 0.85, category: "tools" },
     { id: "vercel", label: "Vercel", x: 0.36, y: 0.85, category: "tools" },
     { id: "jest", label: "Jest / Husky", x: 0.22, y: 0.72, category: "tools" },
-    { id: "chrome", label: "Chrome MV3", x: 0.10, y: 0.08, category: "tools" },
-    { id: "streams", label: "ReadableStream", x: 0.26, y: 0.08, category: "tools" },
-    { id: "cloudinary", label: "Cloudinary", x: 0.40, y: 0.70, category: "tools" },
+    { id: "chrome", label: "Chrome MV3", x: 0.1, y: 0.08, category: "tools" },
+    {
+      id: "streams",
+      label: "ReadableStream",
+      x: 0.26,
+      y: 0.08,
+      category: "tools",
+    },
+    {
+      id: "cloudinary",
+      label: "Cloudinary",
+      x: 0.4,
+      y: 0.7,
+      category: "tools",
+    },
     { id: "stripe", label: "Stripe", x: 0.88, y: 0.74, category: "tools" },
-    { id: "telegram", label: "Telegram Bot API", x: 0.88, y: 0.12, category: "tools" },
+    {
+      id: "telegram",
+      label: "Telegram Bot API",
+      x: 0.88,
+      y: 0.12,
+      category: "tools",
+    },
   ];
 
-  const [nodePositions, setNodePositions] = useState<Map<string, { x: number; y: number }>>(
-    new Map(initialNodes.map((node) => [node.id, { x: node.x * dimensions.width, y: node.y * dimensions.height }]))
+  const [nodePositions, setNodePositions] = useState<
+    Map<string, { x: number; y: number }>
+  >(
+    new Map(
+      initialNodes.map((node) => [
+        node.id,
+        { x: node.x * dimensions.width, y: node.y * dimensions.height },
+      ]),
+    ),
   );
 
   useEffect(() => {
     setNodePositions(
-      new Map(initialNodes.map((node) => [node.id, { x: node.x * dimensions.width, y: node.y * dimensions.height }]))
+      new Map(
+        initialNodes.map((node) => [
+          node.id,
+          { x: node.x * dimensions.width, y: node.y * dimensions.height },
+        ]),
+      ),
     );
   }, [dimensions.width, dimensions.height]);
 
   const nodes = initialNodes.map((node) => ({
     ...node,
-    ...(nodePositions.get(node.id) || { x: node.x * dimensions.width, y: node.y * dimensions.height }),
+    ...(nodePositions.get(node.id) || {
+      x: node.x * dimensions.width,
+      y: node.y * dimensions.height,
+    }),
   }));
 
   const edges: Edge[] = [
@@ -166,11 +255,16 @@ const SkillsGraph = () => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "core": return "#00ff00";
-      case "frontend": return "#00ccff";
-      case "backend": return "#ff00ff";
-      case "tools": return "#ffff00";
-      default: return "#888888";
+      case "core":
+        return "#00ff00";
+      case "frontend":
+        return "#00ccff";
+      case "backend":
+        return "#ff00ff";
+      case "tools":
+        return "#ffff00";
+      default:
+        return "#888888";
     }
   };
 
@@ -179,7 +273,11 @@ const SkillsGraph = () => {
   const isNodeConnected = (nodeId: string) => {
     if (!hoveredNode) return true;
     if (nodeId === hoveredNode) return true;
-    return edges.some(e => (e.from === hoveredNode && e.to === nodeId) || (e.to === hoveredNode && e.from === nodeId));
+    return edges.some(
+      (e) =>
+        (e.from === hoveredNode && e.to === nodeId) ||
+        (e.to === hoveredNode && e.from === nodeId),
+    );
   };
 
   const isEdgeConnected = (edge: Edge) => {
@@ -188,7 +286,10 @@ const SkillsGraph = () => {
   };
 
   const applyMomentum = () => {
-    if (Math.abs(velocityRef.current.x) < 0.05 && Math.abs(velocityRef.current.y) < 0.05) {
+    if (
+      Math.abs(velocityRef.current.x) < 0.05 &&
+      Math.abs(velocityRef.current.y) < 0.05
+    ) {
       velocityRef.current = { x: 0, y: 0 };
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -196,14 +297,20 @@ const SkillsGraph = () => {
       }
       return;
     }
-    setPan(prev => ({ x: prev.x + velocityRef.current.x, y: prev.y + velocityRef.current.y }));
+    setPan((prev) => ({
+      x: prev.x + velocityRef.current.x,
+      y: prev.y + velocityRef.current.y,
+    }));
     velocityRef.current.x *= 0.76;
     velocityRef.current.y *= 0.76;
     animationFrameRef.current = requestAnimationFrame(applyMomentum);
   };
 
   const applyNodeMomentum = (nodeId: string) => {
-    if (Math.abs(nodeVelocityRef.current.x) < 0.05 && Math.abs(nodeVelocityRef.current.y) < 0.05) {
+    if (
+      Math.abs(nodeVelocityRef.current.x) < 0.05 &&
+      Math.abs(nodeVelocityRef.current.y) < 0.05
+    ) {
       nodeVelocityRef.current = { x: 0, y: 0 };
       if (nodeAnimationFrameRef.current) {
         cancelAnimationFrame(nodeAnimationFrameRef.current);
@@ -211,21 +318,29 @@ const SkillsGraph = () => {
       }
       return;
     }
-    setNodePositions(prev => {
+    setNodePositions((prev) => {
       const currentPos = prev.get(nodeId);
       if (!currentPos) return prev;
       const newMap = new Map(prev);
-      newMap.set(nodeId, { x: currentPos.x + nodeVelocityRef.current.x, y: currentPos.y + nodeVelocityRef.current.y });
+      newMap.set(nodeId, {
+        x: currentPos.x + nodeVelocityRef.current.x,
+        y: currentPos.y + nodeVelocityRef.current.y,
+      });
       return newMap;
     });
     nodeVelocityRef.current.x *= 0.78;
     nodeVelocityRef.current.y *= 0.78;
-    nodeAnimationFrameRef.current = requestAnimationFrame(() => applyNodeMomentum(nodeId));
+    nodeAnimationFrameRef.current = requestAnimationFrame(() =>
+      applyNodeMomentum(nodeId),
+    );
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (mode === "sphere") return;
-    if (e.target === e.currentTarget || (e.target as SVGElement).tagName === "svg") {
+    if (
+      e.target === e.currentTarget ||
+      (e.target as SVGElement).tagName === "svg"
+    ) {
       setIsPanning(true);
       setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
       lastPosRef.current = { x: e.clientX, y: e.clientY, time: Date.now() };
@@ -260,7 +375,7 @@ const SkillsGraph = () => {
         const x = e.clientX - rect.left - pan.x;
         const y = e.clientY - rect.top - pan.y;
 
-        setNodePositions(prev => {
+        setNodePositions((prev) => {
           const newMap = new Map(prev);
           newMap.set(draggedNode, { x: x - dragOffset.x, y: y - dragOffset.y });
           return newMap;
@@ -281,10 +396,18 @@ const SkillsGraph = () => {
 
   const handleMouseUp = () => {
     if (mode === "sphere") return;
-    if (isPanning && (Math.abs(velocityRef.current.x) > 0.3 || Math.abs(velocityRef.current.y) > 0.3)) {
+    if (
+      isPanning &&
+      (Math.abs(velocityRef.current.x) > 0.3 ||
+        Math.abs(velocityRef.current.y) > 0.3)
+    ) {
       applyMomentum();
     }
-    if (draggedNode && (Math.abs(nodeVelocityRef.current.x) > 0.3 || Math.abs(nodeVelocityRef.current.y) > 0.3)) {
+    if (
+      draggedNode &&
+      (Math.abs(nodeVelocityRef.current.x) > 0.3 ||
+        Math.abs(nodeVelocityRef.current.y) > 0.3)
+    ) {
       applyNodeMomentum(draggedNode);
     }
     setIsPanning(false);
@@ -323,10 +446,10 @@ const SkillsGraph = () => {
       prevTime = time;
 
       if (mode === "sphere") {
-        setSphereRotation(prev => {
+        setSphereRotation((prev) => {
           let newX = prev.x;
           let newY = prev.y;
-          
+
           if (isAutoRotating) {
             newX += (0 - prev.x) * dt * 2;
             newY += 0.3 * dt;
@@ -343,7 +466,7 @@ const SkillsGraph = () => {
     if (mode === "sphere") {
       animationFrameId = requestAnimationFrame(loop);
     }
-    
+
     return () => {
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
@@ -368,46 +491,53 @@ const SkillsGraph = () => {
     const N = initialNodes.length;
     const sphereRadius = Math.min(dimensions.width, dimensions.height) * 0.35;
 
-    return initialNodes.map((node, i) => {
-      const phi = Math.acos(1 - 2 * (i + 0.5) / N);
-      const theta = Math.PI * (1 + Math.sqrt(5)) * i;
-      
-      let x = Math.cos(theta) * Math.sin(phi);
-      let y = Math.sin(theta) * Math.sin(phi);
-      let z = Math.cos(phi);
+    return initialNodes
+      .map((node, i) => {
+        const phi = Math.acos(1 - (2 * (i + 0.5)) / N);
+        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
 
-      const rx = sphereRotation.x;
-      const ry = sphereRotation.y;
+        let x = Math.cos(theta) * Math.sin(phi);
+        let y = Math.sin(theta) * Math.sin(phi);
+        let z = Math.cos(phi);
 
-      let y1 = y * Math.cos(rx) - z * Math.sin(rx);
-      let z1 = y * Math.sin(rx) + z * Math.cos(rx);
-      
-      let x2 = x * Math.cos(ry) + z1 * Math.sin(ry);
-      let z2 = -x * Math.sin(ry) + z1 * Math.cos(ry);
-      let y2 = y1;
+        const rx = sphereRotation.x;
+        const ry = sphereRotation.y;
 
-      const scale = 250 / (250 + z2 * 100);
-      const xProj = (x2 * sphereRadius * scale) + (dimensions.width / 2);
-      const yProj = (y2 * sphereRadius * scale) + (dimensions.height / 2);
-      
-      const alpha = Math.min(1, Math.max(0.1, (z2 + 1.5) / 2.5));
+        let y1 = y * Math.cos(rx) - z * Math.sin(rx);
+        let z1 = y * Math.sin(rx) + z * Math.cos(rx);
 
-      return {
-        ...node,
-        xProj,
-        yProj,
-        scale,
-        alpha,
-        z: z2
-      };
-    }).sort((a, b) => b.z - a.z);
+        let x2 = x * Math.cos(ry) + z1 * Math.sin(ry);
+        let z2 = -x * Math.sin(ry) + z1 * Math.cos(ry);
+        let y2 = y1;
+
+        const scale = 250 / (250 + z2 * 100);
+        const xProj = x2 * sphereRadius * scale + dimensions.width / 2;
+        const yProj = y2 * sphereRadius * scale + dimensions.height / 2;
+
+        const alpha = Math.min(1, Math.max(0.1, (z2 + 1.5) / 2.5));
+
+        return {
+          ...node,
+          xProj,
+          yProj,
+          scale,
+          alpha,
+          z: z2,
+        };
+      })
+      .sort((a, b) => b.z - a.z);
   };
 
   const handleReset = () => {
     if (mode === "graph") {
       setPan({ x: 0, y: 0 });
       setNodePositions(
-        new Map(initialNodes.map((node) => [node.id, { x: node.x * dimensions.width, y: node.y * dimensions.height }]))
+        new Map(
+          initialNodes.map((node) => [
+            node.id,
+            { x: node.x * dimensions.width, y: node.y * dimensions.height },
+          ]),
+        ),
       );
       velocityRef.current = { x: 0, y: 0 };
       nodeVelocityRef.current = { x: 0, y: 0 };
@@ -425,25 +555,25 @@ const SkillsGraph = () => {
   const sphereNodes = mode === "sphere" ? getSphereNodes() : [];
 
   return (
-    <div className="w-full my-16">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
-        <h2 className="text-2xl md:text-3xl font-extrabold text-white font-mono flex items-center">
-          <span className="text-gray-500 mr-2">## </span>
+    <div className="w-full max-w-5xl mx-auto flex flex-col justify-center min-h-[85vh] py-6 px-4 md:px-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-5 gap-3">
+        <h2 className="text-2xl sm:text-4xl font-extrabold text-white font-mono flex items-center">
+          <span className="text-gray-600 mr-2">## </span>
           skills network
-          <span className="text-gray-500 text-sm md:text-lg ml-2 hidden sm:inline">
-            ({mode === "graph" ? "interactive graph" : "3d orbit"})
+          <span className="text-green-500 text-xs sm:text-sm font-normal ml-3">
+            // {mode === "graph" ? "interactive 2d graph" : "3d orbital view"}
           </span>
         </h2>
         <div className="flex gap-2">
           <button
             onClick={() => setMode(mode === "graph" ? "sphere" : "graph")}
-            className="px-3 py-1.5 md:px-4 md:py-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/50 rounded font-mono text-xs md:text-sm transition-all"
+            className="px-3 py-1.5 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/40 rounded-lg font-mono text-xs sm:text-sm transition-all shadow-[0_0_10px_rgba(34,197,94,0.15)]"
           >
-            {mode === "graph" ? "View 3D Sphere" : "View 2D Graph"}
+            {mode === "graph" ? "3D Sphere Mode" : "2D Graph Mode"}
           </button>
           <button
             onClick={handleReset}
-            className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-600 rounded font-mono text-xs md:text-sm transition-all"
+            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 rounded-lg font-mono text-xs sm:text-sm transition-all"
           >
             Reset
           </button>
@@ -452,7 +582,7 @@ const SkillsGraph = () => {
 
       <div
         ref={containerRef}
-        className={`relative w-full bg-[#1a1a1a] border border-gray-700 rounded-lg overflow-hidden ${mode === "graph" ? "cursor-grab active:cursor-grabbing" : "cursor-crosshair"}`}
+        className={`relative w-full bg-black/50 border border-white/10 rounded-2xl backdrop-blur-xl shadow-2xl overflow-hidden ${mode === "graph" ? "cursor-grab active:cursor-grabbing" : "cursor-crosshair"}`}
         style={{ height: `${dimensions.height}px` }}
         onMouseDown={mode === "graph" ? handleMouseDown : undefined}
         onMouseMove={mode === "graph" ? handleMouseMove : handleSphereMouseMove}
@@ -469,7 +599,10 @@ const SkillsGraph = () => {
           >
             <g
               transform={`translate(${pan.x}, ${pan.y})`}
-              style={{ transition: isPanning || draggedNode ? "none" : "transform 0.1s ease-out" }}
+              style={{
+                transition:
+                  isPanning || draggedNode ? "none" : "transform 0.1s ease-out",
+              }}
             >
               <g className="edges">
                 {edges.map((edge, idx) => {
@@ -530,9 +663,18 @@ const SkillsGraph = () => {
                         strokeWidth={2}
                       />
                       <rect
-                        x={node.x - (node.label.length * (isCoreNode ? coreFontSize : fontSize)) / 2.5}
+                        x={
+                          node.x -
+                          (node.label.length *
+                            (isCoreNode ? coreFontSize : fontSize)) /
+                            2.5
+                        }
                         y={node.y + radius + (isMobile ? 5 : 10)}
-                        width={node.label.length * (isCoreNode ? coreFontSize : fontSize) * 0.65}
+                        width={
+                          node.label.length *
+                          (isCoreNode ? coreFontSize : fontSize) *
+                          0.65
+                        }
                         height={isCoreNode ? coreFontSize + 6 : fontSize + 6}
                         fill="#0a0a0a"
                         opacity={0.85}
@@ -561,9 +703,10 @@ const SkillsGraph = () => {
             {sphereNodes.map((node) => {
               const isCoreNode = node.category === "core";
               const color = getCategoryColor(node.category);
-              const nodeFontSize = (isCoreNode ? coreFontSize + 4 : fontSize + 4) * node.scale;
+              const nodeFontSize =
+                (isCoreNode ? coreFontSize + 4 : fontSize + 4) * node.scale;
               const isHovered = hoveredNode === node.id;
-              
+
               return (
                 <div
                   key={node.id}

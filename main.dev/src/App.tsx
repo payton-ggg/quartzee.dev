@@ -1,71 +1,92 @@
 import {
   About,
+  SkillsGraph,
+  ExperienceSection,
+  TelegramFeed,
+  Contact,
   AnimatedTitle,
   FontSelector,
   KyivClock,
   KyivWeather,
   CVFolder,
   MusicPlayer,
-  TelegramFeed,
+  ParallaxBackground,
+  FullpageNavigation,
 } from "./components";
+import { useFullpageScroll } from "./hooks/useFullpageScroll";
+
+const SECTIONS = [
+  { id: "hero", label: "Overview", short: "01" },
+  { id: "skills", label: "Skills Network", short: "02" },
+  { id: "experience", label: "Experience", short: "03" },
+  { id: "transmissions", label: "Transmissions", short: "04" },
+  { id: "contact", label: "Connect", short: "05" },
+];
 
 function App() {
+  const { currentSection, goToSection, nextSection, progress } =
+    useFullpageScroll({
+      totalSections: SECTIONS.length,
+      transitionDuration: 750,
+    });
+
   return (
-    <div className="min-h-screen text-white font-mono flex flex-col justify-center items-center">
+    <div className="relative w-screen h-screen overflow-hidden bg-[#0c0d0e] text-white font-mono select-none">
+      {/* Background Parallax Multi-layer */}
+      <ParallaxBackground
+        currentSection={currentSection}
+        totalSections={SECTIONS.length}
+      />
+
+      {/* Floating System Widgets */}
       <FontSelector />
       <MusicPlayer />
       <KyivClock />
       <KyivWeather />
       <CVFolder />
       <AnimatedTitle />
-      <main className="lg:p-16 max-w-5xl ">
-        <About />
-        <TelegramFeed />
-        <div className="mt-14 mb-12 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-gray-400 font-mono">
-          <a
-            href="https://t.me/quartzee"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-green-400 transition-colors"
-          >
-            telegram <span className="text-gray-600">(@quartzee)</span>
-          </a>
-          <span className="text-gray-700">/</span>
-          <a
-            href="https://github.com/payton-ggg"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-green-400 transition-colors"
-          >
-            github <span className="text-gray-600">(@payton-ggg)</span>
-          </a>
-          <span className="text-gray-700">/</span>
-          <a
-            href="https://www.linkedin.com/in/marynych-platon-0b0407291/"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-green-400 transition-colors"
-          >
-            linkedin
-          </a>
-          <span className="text-gray-700">/</span>
-          <a
-            href="mailto:platonmarynych@gmail.com"
-            className="hover:text-green-400 transition-colors"
-          >
-            email
-          </a>
-          <span className="text-gray-700">/</span>
-          <a
-            href="https://platon.best/"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-green-400 transition-colors"
-          >
-            platon.best
-          </a>
-        </div>
-      </main>
+
+      {/* Side Dots & Progress Bar Navigation */}
+      <FullpageNavigation
+        currentSection={currentSection}
+        totalSections={SECTIONS.length}
+        sections={SECTIONS}
+        goToSection={goToSection}
+        progress={progress}
+      />
+
+      {/* Main Fullpage Parallax Slides Container */}
+      <div
+        className="w-full h-full transition-transform duration-750 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+        style={{
+          transform: `translateY(-${currentSection * 100}vh)`,
+        }}
+      >
+        {/* Slide 01: Hero / Overview */}
+        <section className="w-full h-screen flex items-center justify-center relative z-10">
+          <About onScrollDown={nextSection} />
+        </section>
+
+        {/* Slide 02: Skills Network */}
+        <section className="w-full h-screen flex items-center justify-center relative z-10">
+          <SkillsGraph />
+        </section>
+
+        {/* Slide 03: Experience */}
+        <section className="w-full h-screen flex items-center justify-center relative z-10">
+          <ExperienceSection />
+        </section>
+
+        {/* Slide 04: Transmissions / Telegram Feed */}
+        <section className="w-full h-screen flex items-center justify-center relative z-10">
+          <TelegramFeed />
+        </section>
+
+        {/* Slide 05: Contact & Socials Hub */}
+        <section className="w-full h-screen flex items-center justify-center relative z-10">
+          <Contact />
+        </section>
+      </div>
     </div>
   );
 }

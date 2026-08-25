@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
+import { Briefcase, Calendar, ChevronRight, CheckCircle2 } from "lucide-react";
 
 interface Project {
   name: string;
@@ -7,52 +8,25 @@ interface Project {
 }
 
 interface Experience {
+  id: string;
   company: string;
   period: string;
   role: string;
+  location?: string;
   projects: Project[];
 }
 
-interface TiltState {
-  rotateX: number;
-  rotateY: number;
-  glowX: number;
-  glowY: number;
-}
-
 const ExperienceSection = () => {
-  const [expandedCard, setExpandedCard] = useState<number | null>(null);
-  const [tilt, setTilt] = useState<{ [key: number]: TiltState }>({});
-  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
-  const cardRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const index = parseInt(
-            entry.target.getAttribute("data-index") || "0"
-          );
-          if (entry.isIntersecting) {
-            setVisibleCards((prev) => new Set([...prev, index]));
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: "50px",
-      }
-    );
-
-    Object.values(cardRefs.current).forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const [activeCompanyIdx, setActiveCompanyIdx] = useState(0);
+  const [expandedProjects, setExpandedProjects] = useState<
+    Record<number, boolean>
+  >({
+    0: true,
+  });
 
   const experiences: Experience[] = [
     {
+      id: "zernote",
       company: "Zernote",
       period: "02/2025 – Present",
       role: "Frontend / Full Stack Engineer",
@@ -79,13 +53,7 @@ const ExperienceSection = () => {
         },
         {
           name: "Automated Feedback & Issue Tracker",
-          stack: [
-            "TypeScript",
-            "Go",
-            "Telegram Bot API",
-            "Webhooks",
-            "GCP",
-          ],
+          stack: ["TypeScript", "Go", "Telegram Bot API", "Webhooks", "GCP"],
           achievements: [
             "Developed an automated Telegram bot for handling bug reports and user feedback",
             "Configured each incoming report to automatically create a dedicated topic in a Telegram supergroup, allowing the team to discuss issues and send replies directly back to the user",
@@ -94,6 +62,7 @@ const ExperienceSection = () => {
       ],
     },
     {
+      id: "developstoday",
       company: "DevelopsToday",
       period: "02/2025 – 12/2025",
       role: "Full Stack Developer",
@@ -147,6 +116,7 @@ const ExperienceSection = () => {
       ],
     },
     {
+      id: "ontheproduct",
       company: "Ontheproduct",
       period: "04/2024 – 02/2025",
       role: "Full Stack Developer",
@@ -198,229 +168,144 @@ const ExperienceSection = () => {
     },
   ];
 
-  const handleMouseMove = (
-    e: React.MouseEvent<HTMLDivElement>,
-    cardIndex: number
-  ) => {
-    const card = cardRefs.current[cardIndex];
-    if (!card) return;
+  const currentExp = experiences[activeCompanyIdx];
 
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateX = ((y - centerY) / centerY) * -10;
-    const rotateY = ((x - centerX) / centerX) * 10;
-
-    setTilt((prev) => ({
+  const toggleProject = (projIdx: number) => {
+    setExpandedProjects((prev) => ({
       ...prev,
-      [cardIndex]: {
-        rotateX,
-        rotateY,
-        glowX: (x / rect.width) * 100,
-        glowY: (y / rect.height) * 100,
-      },
-    }));
-  };
-
-  const handleMouseLeave = (cardIndex: number) => {
-    setTilt((prev) => ({
-      ...prev,
-      [cardIndex]: {
-        rotateX: 0,
-        rotateY: 0,
-        glowX: 50,
-        glowY: 50,
-      },
+      [projIdx]: !prev[projIdx],
     }));
   };
 
   return (
-    <div className="w-full my-16">
-      <h2 className="text-3xl font-extrabold text-white mb-8 font-mono">
-        <span className="text-gray-500">## </span>
-        professional experience
-      </h2>
+    <div className="w-full max-w-5xl mx-auto flex flex-col justify-center min-h-[85vh] py-6 px-4 md:px-8">
+      {/* Section Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+        <div>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-white font-mono flex items-center">
+            <span className="text-gray-600 mr-2">## </span>
+            experience
+            <span className="text-green-500 text-sm md:text-base ml-3 font-normal">
+              // career timeline
+            </span>
+          </h2>
+        </div>
 
-      <div className="space-y-6">
-        {experiences.map((exp, expIdx) => {
-          const isVisible = visibleCards.has(expIdx);
-
-          return (
-            <div
-              key={expIdx}
-              data-index={expIdx}
-              ref={(el) => (cardRefs.current[expIdx] = el)}
-              onMouseMove={(e) => handleMouseMove(e, expIdx)}
-              onMouseLeave={() => handleMouseLeave(expIdx)}
-              className="relative border border-gray-700 bg-[#1a1a1a] rounded-lg overflow-hidden hover:border-green-500 transition-all duration-300"
-              style={{
-                perspective: "1000px",
-                transformStyle: "preserve-3d",
-                transform: tilt[expIdx]
-                  ? `rotateX(${tilt[expIdx].rotateX}deg) rotateY(${tilt[expIdx].rotateY}deg)`
-                  : "rotateX(0deg) rotateY(0deg)",
-                transition: "transform 0.1s ease-out",
-
-                opacity: isVisible ? 1 : 0,
-                // Premium ease-out-back animation
-                animation: isVisible
-                  ? `premiumFadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) ${
-                      expIdx * 0.15
-                    }s forwards`
-                  : "none",
-                willChange: "transform, opacity",
-              }}
-            >
-              <style>{`
-                @keyframes premiumFadeUp {
-                  0% {
-                    opacity: 0;
-                    transform: translateY(60px) scale(0.95) rotateX(10deg);
-                  }
-                  100% {
-                    opacity: 1;
-                    transform: translateY(0) scale(1) rotateX(0deg);
-                  }
-                }
-              `}</style>
-              {/* Glow effect */}
-              <div
-                className="absolute inset-0 pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  background: tilt[expIdx]
-                    ? `radial-gradient(600px circle at ${tilt[expIdx].glowX}% ${tilt[expIdx].glowY}%, rgba(0, 255, 0, 0.1), transparent 40%)`
-                    : "none",
+        {/* Company Switcher Tabs */}
+        <div className="flex items-center gap-2 p-1 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md">
+          {experiences.map((exp, idx) => {
+            const isActive = activeCompanyIdx === idx;
+            return (
+              <button
+                key={exp.id}
+                onClick={() => {
+                  setActiveCompanyIdx(idx);
+                  setExpandedProjects({ 0: true });
                 }}
-              />
-
-              <div
-                className="relative"
-                style={{
-                  transform: "translateZ(20px)",
-                  transformStyle: "preserve-3d",
-                }}
+                className={`px-3 py-1.5 rounded-lg font-mono text-xs sm:text-sm font-semibold transition-all duration-300 ${
+                  isActive
+                    ? "bg-green-500/20 text-green-400 border border-green-500/40 shadow-[0_0_12px_rgba(34,197,94,0.2)]"
+                    : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+                }`}
               >
-                <div className="p-4 md:p-6 border-b border-gray-800">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                    <div>
-                      <h3 className="text-xl md:text-2xl font-bold text-green-400 font-mono glitch">
-                        {exp.company}
-                      </h3>
-                      <p className="text-gray-400 text-sm md:text-base font-mono">
-                        {exp.role}
-                      </p>
+                {exp.company}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Main Experience Glass Container */}
+      <div className="bg-black/50 border border-white/10 rounded-2xl p-5 md:p-7 backdrop-blur-xl shadow-2xl flex flex-col max-h-[68vh] relative overflow-hidden">
+        {/* Company Info Banner */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center justify-center text-green-400">
+              <Briefcase size={20} />
+            </div>
+            <div>
+              <h3 className="text-lg sm:text-xl font-bold text-white font-mono">
+                {currentExp.company}
+              </h3>
+              <p className="text-green-400 text-xs sm:text-sm font-mono">
+                {currentExp.role}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 font-mono text-xs text-gray-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg self-start sm:self-auto">
+            <Calendar size={13} className="text-green-400" />
+            <span>{currentExp.period}</span>
+          </div>
+        </div>
+
+        {/* Scrollable Projects Container */}
+        <div
+          data-scrollable="true"
+          className="overflow-y-auto space-y-4 pr-1 sm:pr-2 custom-scrollbar focus:outline-none"
+          tabIndex={0}
+        >
+          {currentExp.projects.map((proj, projIdx) => {
+            const isExpanded = expandedProjects[projIdx] ?? true;
+
+            return (
+              <div
+                key={projIdx}
+                className="rounded-xl border border-white/10 bg-white/[0.02] hover:border-green-500/30 hover:bg-white/[0.04] transition-all duration-300 overflow-hidden"
+              >
+                {/* Project Header */}
+                <button
+                  onClick={() => toggleProject(projIdx)}
+                  className="w-full p-4 text-left flex items-start justify-between gap-3 focus:outline-none"
+                >
+                  <div className="space-y-2 flex-1">
+                    <div className="flex items-center gap-2">
+                      <ChevronRight
+                        size={16}
+                        className={`text-green-400 transition-transform duration-300 ${
+                          isExpanded ? "rotate-90" : ""
+                        }`}
+                      />
+                      <h4 className="text-sm sm:text-base font-bold text-white font-mono">
+                        {proj.name}
+                      </h4>
                     </div>
-                    <div className="text-gray-500 font-mono text-sm md:text-base">
-                      <span className="text-green-400">$</span> {exp.period}
+
+                    {/* Tech Badges */}
+                    <div className="flex flex-wrap gap-1.5 pl-6">
+                      {proj.stack.map((tech, techIdx) => (
+                        <span
+                          key={techIdx}
+                          className="px-2 py-0.5 rounded bg-black/60 border border-white/10 text-gray-300 font-mono text-[10px] sm:text-xs"
+                        >
+                          {tech}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                </div>
+                </button>
 
-                <div className="divide-y divide-gray-800">
-                  {exp.projects.map((project, projIdx) => {
-                    const cardIndex = expIdx * 10 + projIdx;
-                    const isExpanded = expandedCard === cardIndex;
-
-                    return (
+                {/* Project Achievements */}
+                {isExpanded && (
+                  <div className="px-4 pb-4 pt-1 pl-10 border-t border-white/5 space-y-2">
+                    {proj.achievements.map((ach, achIdx) => (
                       <div
-                        key={projIdx}
-                        className="group hover:bg-[#151515] transition-all duration-300"
+                        key={achIdx}
+                        className="flex items-start gap-2.5 text-gray-300 font-mono text-xs sm:text-sm leading-relaxed"
                       >
-                        <div
-                          className="p-4 md:p-6 cursor-pointer"
-                          onClick={() =>
-                            setExpandedCard(isExpanded ? null : cardIndex)
-                          }
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div
-                              className="flex-1"
-                              style={{
-                                transform: "translateZ(10px)",
-                              }}
-                            >
-                              <div className="flex items-center gap-2 mb-3">
-                                <span className="text-green-400 font-mono text-sm">
-                                  [{isExpanded ? "-" : "+"}]
-                                </span>
-                                <h4 className="text-lg md:text-xl font-bold text-white font-mono group-hover:text-green-400 transition-colors">
-                                  {project.name}
-                                </h4>
-                              </div>
-
-                              <div
-                                className="flex flex-wrap gap-2 mb-4"
-                                style={{
-                                  transform: "translateZ(30px)",
-                                }}
-                              >
-                                {project.stack.map((tech, techIdx) => (
-                                  <span
-                                    key={techIdx}
-                                    className="px-2 py-1 text-xs md:text-sm bg-gray-800 border border-gray-700 text-green-400 rounded font-mono hover:bg-gray-700 hover:border-green-500 transition-all cursor-default"
-                                  >
-                                    {tech}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div className="text-gray-500 group-hover:text-green-400 transition-colors">
-                              <svg
-                                className={`w-5 h-5 md:w-6 md:h-6 transition-transform duration-300 ${
-                                  isExpanded ? "rotate-180" : ""
-                                }`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 9l-7 7-7-7"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-
-                          <div
-                            className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                              isExpanded
-                                ? "max-h-[1000px] opacity-100 mt-4"
-                                : "max-h-0 opacity-0"
-                            }`}
-                          >
-                            <div className="border-l-2 border-green-500 pl-4 space-y-2">
-                              {project.achievements.map(
-                                (achievement, achIdx) => (
-                                  <div
-                                    key={achIdx}
-                                    className="flex items-start gap-2 text-gray-300 text-sm md:text-base"
-                                  >
-                                    <span className="text-green-400 mt-1 flex-shrink-0">
-                                      ▸
-                                    </span>
-                                    <p className="leading-relaxed">
-                                      {achievement}
-                                    </p>
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                        <CheckCircle2
+                          size={14}
+                          className="text-green-400 mt-0.5 flex-shrink-0"
+                        />
+                        <span>{ach}</span>
                       </div>
-                    );
-                  })}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );
