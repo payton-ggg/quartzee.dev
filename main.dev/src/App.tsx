@@ -21,21 +21,49 @@ function App() {
       <main className="lg:p-16 max-w-5xl ">
         <About />
         <TelegramFeed />
-        <div className="mt-10 mb-10 gap-4 flex items-center justify-center">
-          <div>
-            <a href="https://t.me/quartzee" target="_blank" rel="noreferrer">
-              telegram {}
-              <span className="text-gray-500"> (if you love me)</span>
-            </a>
-            <a
-              href="https://github.com/payton-ggg"
-              target="_blank"
-              rel="noreferrer"
-              className="ml-2"
-            >
-              github
-            </a>
-          </div>
+        <div className="mt-14 mb-12 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-gray-400 font-mono">
+          <a
+            href="https://t.me/quartzee"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-green-400 transition-colors"
+          >
+            telegram <span className="text-gray-600">(@quartzee)</span>
+          </a>
+          <span className="text-gray-700">/</span>
+          <a
+            href="https://github.com/payton-ggg"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-green-400 transition-colors"
+          >
+            github <span className="text-gray-600">(@payton-ggg)</span>
+          </a>
+          <span className="text-gray-700">/</span>
+          <a
+            href="https://www.linkedin.com/in/marynych-platon-0b0407291/"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-green-400 transition-colors"
+          >
+            linkedin
+          </a>
+          <span className="text-gray-700">/</span>
+          <a
+            href="mailto:platonmarynych@gmail.com"
+            className="hover:text-green-400 transition-colors"
+          >
+            email
+          </a>
+          <span className="text-gray-700">/</span>
+          <a
+            href="https://platon.best/"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-green-400 transition-colors"
+          >
+            platon.best
+          </a>
         </div>
       </main>
     </div>
