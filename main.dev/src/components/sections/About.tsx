@@ -22,28 +22,46 @@ const About: React.FC = () => {
             what do i do?
           </h2>
 
-          <div className="space-y-6 text-base">
-            currently building full stack apps with Node.js/Python and
-            React.js/Next.js. <br /> <br /> i'm also diving deep into AI,
-            blockchain, and browser automation. from parsers to pwa's — if it
-            runs in the cloud or clicks on your behalf, i've probably built it.
-            <div className="">
-              real-time AI interview assistant
+          <div className="space-y-6 text-base leading-relaxed">
+            Full Stack Developer with 3+ years of experience designing and building
+            production-ready web applications across E-commerce, SaaS, Content Platforms,
+            and Startups. <br /> <br />
+            Strong focus on frontend architecture (React / Next.js / TypeScript),
+            scalable backend APIs (NestJS / Go / Node.js / PostgreSQL), performance optimization,
+            and developer experience. Comfortable owning projects end-to-end, working with legacy
+            systems, and maintaining stability under production load.
+            <div className="pt-2">
+              <span className="text-green-400 font-bold">▸ </span>
+              browser extensions & streaming
               <span className="text-gray-500"> - </span>
               <span className="text-gray-300">
-                listens, thinks, and speaks back
+                Chrome MV3 with ReadableStream real-time data processing
               </span>
             </div>
-            <div className="">
-              telegram mini-apps
+            <div>
+              <span className="text-green-400 font-bold">▸ </span>
+              AI-driven CRM & omnichannel sync
               <span className="text-gray-500"> - </span>
               <span className="text-gray-300">
-                with tasks, logic, and crypto under the hood
+                NLP intent recognition, unified inbox & WebSockets
               </span>
             </div>
-            <p className="text-gray-500 text-sm italic mt-6">
-              i don't have much to say about myself honestly spoo...
-            </p>
+            <div>
+              <span className="text-green-400 font-bold">▸ </span>
+              high-traffic web platforms & e-commerce
+              <span className="text-gray-500"> - </span>
+              <span className="text-gray-300">
+                custom CMS, Next.js middleware routing & caching
+              </span>
+            </div>
+            <div>
+              <span className="text-green-400 font-bold">▸ </span>
+              cloud infra & frontend migrations
+              <span className="text-gray-500"> - </span>
+              <span className="text-gray-300">
+                Vue.js to React migration, Go backend services & GCP
+              </span>
+            </div>
           </div>
         </div>
 

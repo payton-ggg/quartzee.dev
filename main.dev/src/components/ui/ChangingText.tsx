@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 
 const phrases = [
+  "Full Stack Developer with 3+ years building production-grade web systems.",
   "I build products by thinking in systems, not features.",
-  "No overengineering. Just sharp execution.",
+  "Frontend architecture & scalable backend APIs in TypeScript, NestJS & Go.",
+  "No overengineering. Just sharp, high-performance execution.",
   "Discipline from sport. Precision in code.",
   "From logic to architecture. Clean. Predictable. Scalable.",
-  '6 feet 2½ inches. PSL. Just got a fuckin brain to use',
 ];
 
 const longestPhrase =
-  "From logic to architecture. Clean. Predictable. Scalable."
+  "Frontend architecture & scalable backend APIs in TypeScript, NestJS & Go.";
 
 const ChangingText = () => {
   const [currentText, setCurrentText] = useState("");

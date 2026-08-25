@@ -3,10 +3,9 @@ import {
   Mail,
   Github,
   Linkedin,
-  Twitter,
-  Youtube,
-  Twitch,
+  Globe,
   Send,
+  MessageSquare,
 } from "lucide-react";
 import GlitchText from "../ui/GlitchText";
 
@@ -111,11 +110,20 @@ const Contact: React.FC = () => {
 
             <div className="space-y-4">
               <a
-                href="mailto:hello@err01m.dev"
+                href="mailto:platonmarynych@gmail.com"
                 className="flex items-center space-x-4 text-gray-400 hover:text-terminal-green transition-colors font-mono text-base"
               >
                 <Mail size={18} />
-                <span>hello@err01m.dev</span>
+                <span>platonmarynych@gmail.com</span>
+              </a>
+              <a
+                href="https://platon.best/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-4 text-gray-400 hover:text-terminal-green transition-colors font-mono text-base"
+              >
+                <Globe size={18} />
+                <span>platon.best</span>
               </a>
             </div>
           </div>
@@ -131,32 +139,26 @@ const Contact: React.FC = () => {
                 {
                   name: "GitHub",
                   icon: Github,
-                  url: "https://github.com/err01m",
-                  username: "@err01m",
+                  url: "https://github.com/payton-ggg",
+                  username: "@payton-ggg",
                 },
                 {
                   name: "LinkedIn",
                   icon: Linkedin,
-                  url: "https://linkedin.com/in/err01m",
-                  username: "/in/err01m",
+                  url: "https://www.linkedin.com/in/marynych-platon-0b0407291/",
+                  username: "/in/marynych-platon",
                 },
                 {
-                  name: "Twitter",
-                  icon: Twitter,
-                  url: "https://twitter.com/err01m",
-                  username: "@err01m",
+                  name: "Telegram",
+                  icon: MessageSquare,
+                  url: "https://t.me/quartzee",
+                  username: "@quartzee",
                 },
                 {
-                  name: "YouTube",
-                  icon: Youtube,
-                  url: "https://youtube.com/@err01m",
-                  username: "@err01m",
-                },
-                {
-                  name: "Twitch",
-                  icon: Twitch,
-                  url: "https://twitch.tv/err01m",
-                  username: "err01m",
+                  name: "Website",
+                  icon: Globe,
+                  url: "https://platon.best/",
+                  username: "platon.best",
                 },
               ].map((social) => {
                 const Icon = social.icon;
