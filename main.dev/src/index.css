@@ -50,6 +50,15 @@ body {
   scrollbar-color: rgba(34, 197, 94, 0.3) rgba(255, 255, 255, 0.02);
 }
 
+/* Hide scrollbar for tabs on mobile */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Custom animations */
 @keyframes glitch {
   0% {

@@ -178,21 +178,21 @@ const ExperienceSection = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col justify-center min-h-[85vh] py-6 px-4 md:px-8">
+    <div className="w-full max-w-5xl mx-auto flex flex-col justify-center min-h-full py-2 sm:py-6 px-1 sm:px-4 md:px-8">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 mb-3 sm:mb-5">
         <div>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-white font-mono flex items-center">
-            <span className="text-gray-600 mr-2">## </span>
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-white font-mono flex items-center">
+            <span className="text-gray-600 mr-1.5 sm:mr-2">## </span>
             experience
-            <span className="text-green-500 text-sm md:text-base ml-3 font-normal">
+            <span className="text-green-500 text-xs sm:text-base ml-2 sm:ml-3 font-normal">
               // career timeline
             </span>
           </h2>
         </div>
 
         {/* Company Switcher Tabs */}
-        <div className="flex items-center gap-2 p-1 rounded-xl bg-[#111317] border border-white/10">
+        <div className="flex items-center gap-1.5 sm:gap-2 p-1 rounded-xl bg-[#111317] border border-white/10 overflow-x-auto no-scrollbar max-w-full">
           {experiences.map((exp, idx) => {
             const isActive = activeCompanyIdx === idx;
             return (
@@ -202,7 +202,7 @@ const ExperienceSection = () => {
                   setActiveCompanyIdx(idx);
                   setExpandedProjects({ 0: true });
                 }}
-                className={`px-3 py-1.5 rounded-lg font-mono text-xs sm:text-sm font-semibold transition-all duration-300 ${
+                className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg font-mono text-[11px] sm:text-xs md:text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
                   isActive
                     ? "bg-green-500/20 text-green-400 border border-green-500/40 shadow-[0_0_12px_rgba(34,197,94,0.2)]"
                     : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
@@ -216,15 +216,15 @@ const ExperienceSection = () => {
       </div>
 
       {/* Main Experience Glass Container */}
-      <div className="bg-[#111317]/95 border border-white/10 rounded-2xl p-5 md:p-7 shadow-2xl flex flex-col max-h-[68vh] relative overflow-hidden">
+      <div className="bg-[#111317]/95 border border-white/10 rounded-2xl p-3.5 sm:p-5 md:p-7 shadow-2xl flex flex-col max-h-[60vh] sm:max-h-[68vh] relative overflow-hidden">
         {/* Company Info Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10 mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center justify-center text-green-400">
-              <Briefcase size={20} />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 sm:pb-4 border-b border-white/10 mb-3 sm:mb-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center justify-center text-green-400 flex-shrink-0">
+              <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-white font-mono">
+              <h3 className="text-base sm:text-xl font-bold text-white font-mono">
                 {currentExp.company}
               </h3>
               <p className="text-green-400 text-xs sm:text-sm font-mono">
@@ -233,7 +233,7 @@ const ExperienceSection = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 font-mono text-xs text-gray-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg self-start sm:self-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-[10px] sm:text-xs text-gray-400 bg-white/5 border border-white/10 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg self-start sm:self-auto">
             <Calendar size={13} className="text-green-400" />
             <span>{currentExp.period}</span>
           </div>
@@ -242,7 +242,7 @@ const ExperienceSection = () => {
         {/* Scrollable Projects Container */}
         <div
           data-scrollable="true"
-          className="overflow-y-auto space-y-4 pr-1 sm:pr-2 custom-scrollbar focus:outline-none"
+          className="overflow-y-auto space-y-3 sm:space-y-4 pr-1 sm:pr-2 custom-scrollbar focus:outline-none"
           tabIndex={0}
         >
           {currentExp.projects.map((proj, projIdx) => {
@@ -256,27 +256,27 @@ const ExperienceSection = () => {
                 {/* Project Header */}
                 <button
                   onClick={() => toggleProject(projIdx)}
-                  className="w-full p-4 text-left flex items-start justify-between gap-3 focus:outline-none"
+                  className="w-full p-3 sm:p-4 text-left flex items-start justify-between gap-2.5 focus:outline-none"
                 >
-                  <div className="space-y-2 flex-1">
+                  <div className="space-y-1.5 sm:space-y-2 flex-1">
                     <div className="flex items-center gap-2">
                       <ChevronRight
-                        size={16}
-                        className={`text-green-400 transition-transform duration-300 ${
+                        size={15}
+                        className={`text-green-400 transition-transform duration-300 flex-shrink-0 ${
                           isExpanded ? "rotate-90" : ""
                         }`}
                       />
-                      <h4 className="text-sm sm:text-base font-bold text-white font-mono">
+                      <h4 className="text-xs sm:text-base font-bold text-white font-mono">
                         {proj.name}
                       </h4>
                     </div>
 
                     {/* Tech Badges */}
-                    <div className="flex flex-wrap gap-1.5 pl-6">
+                    <div className="flex flex-wrap gap-1 sm:gap-1.5 pl-4 sm:pl-6">
                       {proj.stack.map((tech, techIdx) => (
                         <span
                           key={techIdx}
-                          className="px-2 py-0.5 rounded bg-black/60 border border-white/10 text-gray-300 font-mono text-[10px] sm:text-xs"
+                          className="px-1.5 sm:px-2 py-0.5 rounded bg-black/60 border border-white/10 text-gray-300 font-mono text-[9px] sm:text-xs"
                         >
                           {tech}
                         </span>
@@ -287,14 +287,14 @@ const ExperienceSection = () => {
 
                 {/* Project Achievements */}
                 {isExpanded && (
-                  <div className="px-4 pb-4 pt-1 pl-10 border-t border-white/5 space-y-2">
+                  <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1 pl-6 sm:pl-10 border-t border-white/5 space-y-1.5 sm:space-y-2">
                     {proj.achievements.map((ach, achIdx) => (
                       <div
                         key={achIdx}
-                        className="flex items-start gap-2.5 text-gray-300 font-mono text-xs sm:text-sm leading-relaxed"
+                        className="flex items-start gap-2 text-gray-300 font-mono text-xs sm:text-sm leading-relaxed"
                       >
                         <CheckCircle2
-                          size={14}
+                          size={13}
                           className="text-green-400 mt-0.5 flex-shrink-0"
                         />
                         <span>{ach}</span>

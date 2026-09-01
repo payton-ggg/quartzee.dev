@@ -52,8 +52,8 @@ const KyivWeather = () => {
   return (
     <>
       {weather.isRaining && <AsciiRain />}
-      {/* Positioned right below the KyivClock which is at top-6 */}
-      <div className="fixed top-24 right-6 flex flex-col items-end gap-1 z-50 pointer-events-none hidden sm:flex">
+      {/* Positioned right below the Clock on desktop */}
+      <div className="fixed top-20 md:top-24 right-3 md:right-6 flex flex-col items-end gap-1 z-50 pointer-events-none hidden sm:flex">
         <div className="font-mono text-[10px] text-gray-500 tracking-wider uppercase bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
           {weather.vibe}
         </div>
@@ -61,14 +61,14 @@ const KyivWeather = () => {
           {weather.temp.toFixed(1)}°C
         </div>
       </div>
-      
-      {/* Mobile view fallback: position relative or bottom if top is crowded */}
-      <div className="fixed bottom-6 left-6 flex flex-col items-start gap-1 z-50 pointer-events-none sm:hidden">
-        <div className="font-mono text-[10px] text-gray-500 tracking-wider uppercase bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
-          {weather.vibe}
-        </div>
-        <div className="font-mono text-lg text-green-400 tracking-wider glitch mt-1">
-          {weather.temp.toFixed(1)}°C
+
+      {/* Mobile view: compact pill right below KyivClock at top right */}
+      <div className="fixed top-12 right-3 flex items-center gap-1.5 z-50 pointer-events-none sm:hidden">
+        <div className="font-mono text-[9px] text-gray-400 tracking-wider uppercase bg-black/70 backdrop-blur-md px-1.5 py-0.5 rounded border border-white/10 flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+          <span>{weather.temp.toFixed(1)}°C</span>
+          <span className="text-gray-500">//</span>
+          <span className="text-gray-300">{weather.vibe}</span>
         </div>
       </div>
     </>

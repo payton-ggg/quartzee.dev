@@ -81,13 +81,13 @@ const TelegramFeed = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col justify-center min-h-[85vh] py-6 px-4 md:px-8">
+    <div className="w-full max-w-5xl mx-auto flex flex-col justify-center min-h-full py-2 sm:py-6 px-1 sm:px-4 md:px-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <h2 className="text-2xl sm:text-4xl font-extrabold text-white font-mono flex items-center">
-          <span className="text-gray-600 mr-2">## </span>
+      <div className="flex flex-wrap sm:flex-nowrap sm:items-center justify-between gap-2.5 sm:gap-3 mb-3 sm:mb-4">
+        <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-white font-mono flex items-center">
+          <span className="text-gray-600 mr-1.5 sm:mr-2">## </span>
           transmissions
-          <span className="text-green-500 text-xs sm:text-sm font-normal ml-3">
+          <span className="text-green-500 text-xs sm:text-sm font-normal ml-2 sm:ml-3">
             // telegram stream
           </span>
         </h2>
@@ -96,7 +96,7 @@ const TelegramFeed = () => {
           href="https://t.me/PhilosophDiferent"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 text-xs font-mono transition-all self-start sm:self-auto shadow-[0_0_10px_rgba(34,197,94,0.15)]"
+          className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 text-[11px] sm:text-xs font-mono transition-all shadow-[0_0_10px_rgba(34,197,94,0.15)]"
         >
           <span>OPEN CHANNEL</span>
           <span>↗</span>
@@ -104,23 +104,23 @@ const TelegramFeed = () => {
       </div>
 
       {loading && (
-        <div className="text-gray-500 animate-pulse flex items-center justify-center gap-3 my-12 font-mono text-sm">
-          <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-ping" />
+        <div className="text-gray-500 animate-pulse flex items-center justify-center gap-3 my-8 sm:my-12 font-mono text-xs sm:text-sm">
+          <span className="w-2 h-2 bg-green-500 rounded-full animate-ping" />
           <span>ESTABLISHING CONNECTION...</span>
         </div>
       )}
 
       {error && (
-        <div className="text-red-400 border border-red-500/30 p-4 rounded-xl bg-red-500/10 my-4 text-center font-mono text-xs">
+        <div className="text-red-400 border border-red-500/30 p-3 sm:p-4 rounded-xl bg-red-500/10 my-3 text-center font-mono text-xs">
           [ERROR]: Failed to intercept signal ({error})
         </div>
       )}
 
       {isFallback && !loading && !error && (
-        <div className="text-yellow-400/90 border border-yellow-500/20 p-2.5 rounded-xl bg-[#1a1708] mb-3 text-center text-xs font-mono flex items-center justify-between gap-2">
+        <div className="text-yellow-400/90 border border-yellow-500/20 p-2 sm:p-2.5 rounded-xl bg-[#1a1708] mb-2.5 text-center text-xs font-mono flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
-            <span className="text-[11px] sm:text-xs">
+            <span className="text-[10px] sm:text-xs">
               [OFFLINE CACHE]: BACKUP RENDERED
             </span>
           </div>
@@ -128,7 +128,7 @@ const TelegramFeed = () => {
             href="https://t.me/PhilosophDiferent"
             target="_blank"
             rel="noreferrer"
-            className="text-yellow-400 hover:underline font-bold text-[11px] sm:text-xs"
+            className="text-yellow-400 hover:underline font-bold text-[10px] sm:text-xs"
           >
             Direct Link ↗
           </a>
@@ -138,17 +138,17 @@ const TelegramFeed = () => {
       {/* Posts Container */}
       <div
         data-scrollable="true"
-        className="overflow-y-auto max-h-[62vh] pr-1 sm:pr-2 custom-scrollbar focus:outline-none"
+        className="overflow-y-auto max-h-[60vh] sm:max-h-[64vh] pr-1 sm:pr-2 custom-scrollbar focus:outline-none"
         tabIndex={0}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {visiblePosts.map((post) => (
             <div
               key={post.id}
-              className="bg-[#111317]/95 border border-white/10 rounded-xl p-4 flex flex-col gap-3 transition-all duration-300 hover:border-green-500/40 hover:shadow-[0_0_15px_rgba(34,197,94,0.12)] group relative overflow-hidden"
+              className="bg-[#111317]/95 border border-white/10 rounded-xl p-3 sm:p-4 flex flex-col gap-2.5 sm:gap-3 transition-all duration-300 hover:border-green-500/40 hover:shadow-[0_0_15px_rgba(34,197,94,0.12)] group relative overflow-hidden"
             >
-              <div className="text-[11px] font-mono text-gray-500 flex justify-between items-center border-b border-white/5 pb-2.5 relative z-10">
-                <span className="flex items-center gap-2">
+              <div className="text-[10px] sm:text-[11px] font-mono text-gray-500 flex justify-between items-center border-b border-white/5 pb-2 relative z-10">
+                <span className="flex items-center gap-1.5 sm:gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-gray-500 group-hover:bg-green-500 transition-colors" />
                   {new Date(post.date).toLocaleDateString()}
                 </span>
@@ -156,14 +156,14 @@ const TelegramFeed = () => {
                   href="https://t.me/PhilosophDiferent"
                   target="_blank"
                   rel="noreferrer"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity text-green-400 hover:underline"
+                  className="opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity text-green-400 hover:underline"
                 >
                   view ↗
                 </a>
               </div>
 
               {post.photoUrl && (
-                <div className="relative w-full rounded-lg overflow-hidden bg-black border border-white/5 z-10 max-h-[220px]">
+                <div className="relative w-full rounded-lg overflow-hidden bg-black border border-white/5 z-10 max-h-[170px] sm:max-h-[220px]">
                   <img
                     src={post.photoUrl}
                     alt="Telegram post media"
@@ -177,7 +177,7 @@ const TelegramFeed = () => {
 
               {post.text && (
                 <div
-                  className="text-xs sm:text-sm font-mono text-gray-300 leading-relaxed break-words relative z-10
+                  className="text-[11px] sm:text-xs md:text-sm font-mono text-gray-300 leading-relaxed break-words relative z-10
                   [&>a]:text-green-400 [&>a]:underline-offset-4 hover:[&>a]:underline
                   [&>i]:text-gray-400 [&>b]:text-white
                   [&>tg-emoji]:inline-block [&>tg-emoji]:w-4 [&>tg-emoji]:h-4"
@@ -189,10 +189,10 @@ const TelegramFeed = () => {
         </div>
 
         {hasMore && (
-          <div className="mt-4 flex justify-center pb-2">
+          <div className="mt-3 sm:mt-4 flex justify-center pb-2">
             <button
               onClick={loadMore}
-              className="px-5 py-2 border border-white/10 hover:border-green-500/40 text-gray-300 hover:text-white rounded-lg bg-[#111317] transition-all text-xs font-mono font-bold"
+              className="px-4 py-1.5 sm:px-5 sm:py-2 border border-white/10 hover:border-green-500/40 text-gray-300 hover:text-white rounded-lg bg-[#111317] transition-all text-[11px] sm:text-xs font-mono font-bold"
             >
               LOAD MORE TRANSMISSIONS
             </button>

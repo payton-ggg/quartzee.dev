@@ -31,7 +31,7 @@ function App() {
     });
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-[#0c0d0e] text-white font-mono select-none">
+    <div className="relative w-screen h-[100dvh] overflow-hidden bg-[#0c0d0e] text-white font-mono select-none">
       {/* Background Parallax Multi-layer */}
       <ParallaxBackground
         currentSection={currentSection}
@@ -59,31 +59,31 @@ function App() {
       <div
         className="w-full h-full transition-transform duration-750 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
         style={{
-          transform: `translateY(-${currentSection * 100}vh)`,
+          transform: `translateY(-${currentSection * 100}%)`,
         }}
       >
         {/* Slide 01: Hero / Overview */}
-        <section className="w-full h-screen flex items-center justify-center relative z-10">
+        <section className="w-full h-[100dvh] flex items-center justify-center relative z-10 px-2 sm:px-4 md:px-8 py-6 sm:py-6 overflow-hidden">
           <About onScrollDown={nextSection} />
         </section>
 
         {/* Slide 02: Skills Network */}
-        <section className="w-full h-screen flex items-center justify-center relative z-10">
+        <section className="w-full h-[100dvh] flex items-center justify-center relative z-10 px-2 sm:px-4 md:px-8 py-6 sm:py-6 overflow-hidden">
           <SkillsGraph />
         </section>
 
         {/* Slide 03: Experience */}
-        <section className="w-full h-screen flex items-center justify-center relative z-10">
+        <section className="w-full h-[100dvh] flex items-center justify-center relative z-10 px-2 sm:px-4 md:px-8 py-6 sm:py-6 overflow-hidden">
           <ExperienceSection />
         </section>
 
         {/* Slide 04: Transmissions / Telegram Feed */}
-        <section className="w-full h-screen flex items-center justify-center relative z-10">
+        <section className="w-full h-[100dvh] flex items-center justify-center relative z-10 px-2 sm:px-4 md:px-8 py-6 sm:py-6 overflow-hidden">
           <TelegramFeed />
         </section>
 
         {/* Slide 05: Contact & Socials Hub */}
-        <section className="w-full h-screen flex items-center justify-center relative z-10">
+        <section className="w-full h-[100dvh] flex items-center justify-center relative z-10 px-2 sm:px-4 md:px-8 py-6 sm:py-6 overflow-hidden">
           <Contact />
         </section>
       </div>

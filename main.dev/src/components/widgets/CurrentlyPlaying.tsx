@@ -63,42 +63,41 @@ export default function CurrentlyPlaying() {
   };
 
   return (
-    <div className="mt-10 bg-[#1a1a1a] border border-gray-700 rounded-lg p-6">
-      <h2 className="text-2xl text-white mb-6">
-        <span className="text-gray-500">### </span>
-        currently coding
-      </h2>
-      <p className="text-base text-gray-400 mb-6">
-        below lies the track that i'm currently listening to on spotify... or,
-        well, simply nothing if i'm not listening to anything atm :p
-      </p>
+    <div className="mt-4 sm:mt-6 bg-black/50 border border-white/10 rounded-xl p-3 sm:p-4 backdrop-blur-sm">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-xs uppercase tracking-wider font-bold text-gray-400 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+          <span>CURRENTLY CODING</span>
+        </h2>
+        <span className="text-[10px] text-gray-500 font-mono">SPOTIFY SYNC</span>
+      </div>
 
       {loading ? (
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-xs text-gray-500 font-mono py-1">Connecting to stream...</div>
       ) : track ? (
-        <div className="flex items-center space-x-6 bg-[#161616] border border-gray-600 rounded-lg p-4">
+        <div className="flex items-center gap-3 bg-white/[0.03] border border-white/5 rounded-lg p-2.5">
           <img
             src={track.image}
             alt="Album Cover"
-            className="w-16 h-16 rounded-lg object-cover"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-md object-cover flex-shrink-0"
           />
-          <div className="flex-1">
-            <div className="text-white font-semibold text-base">
+          <div className="flex-1 min-w-0">
+            <div className="text-white font-semibold text-xs sm:text-sm truncate">
               {track.name}
             </div>
-            <div className="text-gray-400 text-sm">by {track.artist}</div>
+            <div className="text-gray-400 text-[11px] sm:text-xs truncate">
+              by {track.artist}
+            </div>
           </div>
-          <div className="text-gray-400 text-sm">
+          <div className="text-gray-500 text-[10px] sm:text-xs font-mono flex-shrink-0">
             {formatTime(track.progress)} / {formatTime(track.duration)}
           </div>
         </div>
       ) : (
-        <div className="text-gray-400">Not playing anything 😴</div>
+        <div className="text-xs text-gray-400 font-mono py-1 flex items-center gap-2">
+          <span>🎧 Idle / offline session</span>
+        </div>
       )}
-
-      <p className="text-xs text-gray-500 mt-3">
-        this data is approximate and may be delayed by a few seconds.
-      </p>
     </div>
   );
 }

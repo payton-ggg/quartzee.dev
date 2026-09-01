@@ -13,6 +13,8 @@ export function useFullpageScroll({
   const [isScrolling, setIsScrolling] = useState(false);
   const isScrollingRef = useRef(false);
   const touchStartY = useRef(0);
+  const touchStartX = useRef(0);
+  const touchTarget = useRef<HTMLElement | null>(null);
 
   const goToSection = useCallback(
     (index: number) => {
@@ -92,13 +94,43 @@ export function useFullpageScroll({
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY.current = e.touches[0].clientY;
+      touchStartX.current = e.touches[0].clientX;
+      touchTarget.current = e.target as HTMLElement | null;
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
       const touchEndY = e.changedTouches[0].clientY;
+      const touchEndX = e.changedTouches[0].clientX;
       const diffY = touchStartY.current - touchEndY;
+      const diffX = touchStartX.current - touchEndX;
 
-      if (Math.abs(diffY) > 50) {
+      // Ignore predominantly horizontal swipes (e.g. tabs or graph drags)
+      if (Math.abs(diffX) > Math.abs(diffY) * 1.5) return;
+
+      if (Math.abs(diffY) > 40) {
+        // Check if touch is inside a scrollable container
+        let target = touchTarget.current;
+        let isInsideScrollable = false;
+
+        while (target && target !== document.body) {
+          if (target.getAttribute("data-scrollable") === "true") {
+            const { scrollTop, scrollHeight, clientHeight } = target;
+            const isAtTop = scrollTop <= 3;
+            const isAtBottom =
+              Math.ceil(scrollTop + clientHeight) >= scrollHeight - 4;
+
+            // Swiping UP (diffY > 0) -> scroll container down
+            // Swiping DOWN (diffY < 0) -> scroll container up
+            if ((diffY > 0 && !isAtBottom) || (diffY < 0 && !isAtTop)) {
+              isInsideScrollable = true;
+              break;
+            }
+          }
+          target = target.parentElement;
+        }
+
+        if (isInsideScrollable) return;
+
         if (diffY > 0) {
           nextSection();
         } else {

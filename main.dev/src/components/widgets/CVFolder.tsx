@@ -26,7 +26,7 @@ const CVFolder = () => {
       href="https://drive.google.com/file/d/1nryVpwvTmvS8rdpXSZ0R6kGWkJ97Q9Wi/view?usp=sharing"
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-8 right-8 z-50 group perspective-[1000px]"
+      className="fixed bottom-3 right-3 md:bottom-8 md:right-8 z-50 group perspective-[1000px] scale-75 md:scale-100 origin-bottom-right"
       title="Download CV"
     >
       <div

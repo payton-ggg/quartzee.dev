@@ -43,7 +43,12 @@ const SkillsGraph = () => {
     const updateDimensions = () => {
       if (containerRef.current) {
         const width = containerRef.current.offsetWidth;
-        const height = Math.min(520, Math.max(340, width * 0.58));
+        const isNarrow = width < 640;
+        const maxHeight = isNarrow
+          ? Math.min(380, window.innerHeight * 0.46)
+          : 520;
+        const minHeight = isNarrow ? 260 : 340;
+        const height = Math.min(maxHeight, Math.max(minHeight, width * 0.56));
         setDimensions({ width, height });
       }
     };
@@ -436,6 +441,125 @@ const SkillsGraph = () => {
     }
   };
 
+  const handleTouchStartGraph = (e: React.TouchEvent) => {
+    if (mode === "sphere") return;
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setIsPanning(true);
+      setPanStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
+      lastPosRef.current = {
+        x: touch.clientX,
+        y: touch.clientY,
+        time: Date.now(),
+      };
+      velocityRef.current = { x: 0, y: 0 };
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    }
+  };
+
+  const handleTouchMoveGraph = (e: React.TouchEvent) => {
+    if (mode === "sphere") {
+      if (e.touches.length > 0 && containerRef.current) {
+        setIsAutoRotating(false);
+        const touch = e.touches[0];
+        const rect = containerRef.current.getBoundingClientRect();
+        const x = (touch.clientX - rect.left) / rect.width - 0.5;
+        const y = (touch.clientY - rect.top) / rect.height - 0.5;
+        setTargetRotation({ x: y * 3, y: x * 3 });
+      }
+      return;
+    }
+
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      if (isPanning) {
+        const newPan = {
+          x: touch.clientX - panStart.x,
+          y: touch.clientY - panStart.y,
+        };
+        setPan(newPan);
+        const now = Date.now();
+        const dt = now - lastPosRef.current.time;
+        if (dt > 0) {
+          velocityRef.current = {
+            x: ((touch.clientX - lastPosRef.current.x) / dt) * 30,
+            y: ((touch.clientY - lastPosRef.current.y) / dt) * 30,
+          };
+        }
+        lastPosRef.current = { x: touch.clientX, y: touch.clientY, time: now };
+      }
+
+      if (draggedNode) {
+        const svg = containerRef.current?.querySelector("svg");
+        if (svg) {
+          const rect = svg.getBoundingClientRect();
+          const x = touch.clientX - rect.left - pan.x;
+          const y = touch.clientY - rect.top - pan.y;
+
+          setNodePositions((prev) => {
+            const newMap = new Map(prev);
+            newMap.set(draggedNode, {
+              x: x - dragOffset.x,
+              y: y - dragOffset.y,
+            });
+            return newMap;
+          });
+
+          const now = Date.now();
+          const dt = now - lastNodePosRef.current.time;
+          if (dt > 0) {
+            nodeVelocityRef.current = {
+              x: ((x - lastNodePosRef.current.x) / dt) * 30,
+              y: ((y - lastNodePosRef.current.y) / dt) * 30,
+            };
+          }
+          lastNodePosRef.current = { x, y, time: now };
+        }
+      }
+    }
+  };
+
+  const handleTouchEndGraph = () => {
+    if (mode === "sphere") {
+      setIsAutoRotating(true);
+      return;
+    }
+    handleMouseUp();
+  };
+
+  const handleNodeTouchStart = (e: React.TouchEvent, nodeId: string) => {
+    if (mode === "sphere") return;
+    e.stopPropagation();
+    setHoveredNode(nodeId);
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const node = nodes.find((n) => n.id === nodeId);
+      if (node) {
+        setDraggedNode(nodeId);
+        const svg = containerRef.current?.querySelector("svg");
+        if (svg) {
+          const rect = svg.getBoundingClientRect();
+          const x = touch.clientX - rect.left - pan.x;
+          const y = touch.clientY - rect.top - pan.y;
+          setDragOffset({ x: x - node.x, y: y - node.y });
+          lastNodePosRef.current = {
+            x: touch.clientX,
+            y: touch.clientY,
+            time: Date.now(),
+          };
+          nodeVelocityRef.current = { x: 0, y: 0 };
+          if (nodeAnimationFrameRef.current) {
+            cancelAnimationFrame(nodeAnimationFrameRef.current);
+            nodeAnimationFrameRef.current = null;
+          }
+        }
+      }
+    }
+  };
+
   // --- Sphere Animation Logic ---
   useEffect(() => {
     let animationFrameId: number;
@@ -547,33 +671,33 @@ const SkillsGraph = () => {
   };
 
   const isMobile = dimensions.width < 640;
-  const baseRadius = isMobile ? 8 : 12;
-  const coreRadius = isMobile ? 12 : 16;
-  const fontSize = isMobile ? 10 : 12;
-  const coreFontSize = isMobile ? 12 : 14;
+  const baseRadius = isMobile ? 7 : 12;
+  const coreRadius = isMobile ? 10 : 16;
+  const fontSize = isMobile ? 9 : 12;
+  const coreFontSize = isMobile ? 11 : 14;
 
   const sphereNodes = mode === "sphere" ? getSphereNodes() : [];
 
   return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col justify-center min-h-[85vh] py-6 px-4 md:px-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-5 gap-3">
-        <h2 className="text-2xl sm:text-4xl font-extrabold text-white font-mono flex items-center">
-          <span className="text-gray-600 mr-2">## </span>
+    <div className="w-full max-w-5xl mx-auto flex flex-col justify-center min-h-full py-2 sm:py-6 px-1 sm:px-4 md:px-8">
+      <div className="flex flex-wrap justify-between items-center mb-2 sm:mb-4 gap-2">
+        <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-white font-mono flex items-center">
+          <span className="text-gray-600 mr-1.5 sm:mr-2">## </span>
           skills network
-          <span className="text-green-500 text-xs sm:text-sm font-normal ml-3">
+          <span className="text-green-500 text-[10px] sm:text-sm font-normal ml-2 sm:ml-3">
             // {mode === "graph" ? "interactive 2d graph" : "3d orbital view"}
           </span>
         </h2>
         <div className="flex gap-2">
           <button
             onClick={() => setMode(mode === "graph" ? "sphere" : "graph")}
-            className="px-3 py-1.5 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/40 rounded-lg font-mono text-xs sm:text-sm transition-all shadow-[0_0_10px_rgba(34,197,94,0.15)]"
+            className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/40 rounded-lg font-mono text-[11px] sm:text-sm transition-all shadow-[0_0_10px_rgba(34,197,94,0.15)]"
           >
-            {mode === "graph" ? "3D Sphere Mode" : "2D Graph Mode"}
+            {mode === "graph" ? "3D Sphere" : "2D Graph"}
           </button>
           <button
             onClick={handleReset}
-            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 rounded-lg font-mono text-xs sm:text-sm transition-all"
+            className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 rounded-lg font-mono text-[11px] sm:text-sm transition-all"
           >
             Reset
           </button>
@@ -582,12 +706,20 @@ const SkillsGraph = () => {
 
       <div
         ref={containerRef}
-        className={`relative w-full bg-[#111317]/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden ${mode === "graph" ? "cursor-grab active:cursor-grabbing" : "cursor-crosshair"}`}
+        data-scrollable="false"
+        className={`relative w-full bg-[#111317]/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden touch-none ${
+          mode === "graph"
+            ? "cursor-grab active:cursor-grabbing"
+            : "cursor-crosshair"
+        }`}
         style={{ height: `${dimensions.height}px` }}
         onMouseDown={mode === "graph" ? handleMouseDown : undefined}
         onMouseMove={mode === "graph" ? handleMouseMove : handleSphereMouseMove}
         onMouseUp={mode === "graph" ? handleMouseUp : undefined}
         onMouseLeave={mode === "graph" ? handleMouseUp : handleSphereMouseLeave}
+        onTouchStart={handleTouchStartGraph}
+        onTouchMove={handleTouchMoveGraph}
+        onTouchEnd={handleTouchEndGraph}
       >
         {mode === "graph" ? (
           <svg
@@ -619,8 +751,8 @@ const SkillsGraph = () => {
                       x2={toNode.x}
                       y2={toNode.y}
                       stroke={isActive ? "#00ff00" : "#333333"}
-                      strokeWidth={isActive ? 2 : 1}
-                      opacity={isActive ? 0.8 : 0.3}
+                      strokeWidth={isActive ? (isMobile ? 1.5 : 2) : 1}
+                      opacity={isActive ? 0.8 : 0.25}
                       className="transition-all duration-300 pointer-events-none"
                     />
                   );
@@ -640,15 +772,15 @@ const SkillsGraph = () => {
                       onMouseEnter={() => setHoveredNode(node.id)}
                       onMouseLeave={() => setHoveredNode(null)}
                       onMouseDown={(e) => handleNodeMouseDown(e, node.id)}
-                      onTouchStart={() => setHoveredNode(node.id)}
+                      onTouchStart={(e) => handleNodeTouchStart(e, node.id)}
                       className="cursor-move transition-opacity duration-300"
-                      style={{ opacity: isActive ? 1 : 0.6 }}
+                      style={{ opacity: isActive ? 1 : 0.5 }}
                     >
                       {hoveredNode === node.id && (
                         <circle
                           cx={node.x}
                           cy={node.y}
-                          r={radius + 6}
+                          r={radius + (isMobile ? 4 : 6)}
                           fill={color}
                           opacity={0.25}
                           className="pointer-events-none"
@@ -660,22 +792,22 @@ const SkillsGraph = () => {
                         r={radius}
                         fill={hoveredNode === node.id ? color : "#1a1a1a"}
                         stroke={color}
-                        strokeWidth={2}
+                        strokeWidth={isMobile ? 1.5 : 2}
                       />
                       <rect
                         x={
                           node.x -
                           (node.label.length *
                             (isCoreNode ? coreFontSize : fontSize)) /
-                            2.5
+                            2.4
                         }
-                        y={node.y + radius + (isMobile ? 5 : 10)}
+                        y={node.y + radius + (isMobile ? 3 : 8)}
                         width={
                           node.label.length *
                           (isCoreNode ? coreFontSize : fontSize) *
-                          0.65
+                          0.68
                         }
-                        height={isCoreNode ? coreFontSize + 6 : fontSize + 6}
+                        height={isCoreNode ? coreFontSize + 4 : fontSize + 4}
                         fill="#0a0a0a"
                         opacity={0.95}
                         rx={3}
@@ -683,7 +815,7 @@ const SkillsGraph = () => {
                       />
                       <text
                         x={node.x - radius / 2}
-                        y={node.y + radius + (isMobile ? 15 : 20)}
+                        y={node.y + radius + (isMobile ? 12 : 18)}
                         textAnchor="middle"
                         fill={hoveredNode === node.id ? "#ffffff" : color}
                         fontSize={isCoreNode ? coreFontSize : fontSize}
@@ -704,7 +836,7 @@ const SkillsGraph = () => {
               const isCoreNode = node.category === "core";
               const color = getCategoryColor(node.category);
               const nodeFontSize =
-                (isCoreNode ? coreFontSize + 4 : fontSize + 4) * node.scale;
+                (isCoreNode ? coreFontSize + 3 : fontSize + 3) * node.scale;
               const isHovered = hoveredNode === node.id;
 
               return (
@@ -712,6 +844,7 @@ const SkillsGraph = () => {
                   key={node.id}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => setHoveredNode(null)}
+                  onTouchStart={() => setHoveredNode(node.id)}
                   className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-colors duration-200 cursor-pointer flex items-center justify-center font-mono whitespace-nowrap"
                   style={{
                     left: `${node.xProj}px`,
@@ -731,36 +864,30 @@ const SkillsGraph = () => {
         )}
 
         {/* Legend */}
-        <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 font-mono text-[10px] md:text-xs space-y-1 pointer-events-none">
-          <div className="flex items-center gap-1 md:gap-2">
-            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#00ff00]"></div>
+        <div className="absolute bottom-1.5 sm:bottom-3 left-2 sm:left-4 font-mono text-[9px] sm:text-xs flex sm:flex-col gap-2 sm:gap-1 pointer-events-none bg-black/60 sm:bg-transparent p-1 sm:p-0 rounded border border-white/5 sm:border-0">
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-[#00ff00]"></div>
             <span className="text-gray-400">Core</span>
           </div>
-          <div className="flex items-center gap-1 md:gap-2">
-            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#00ccff]"></div>
-            <span className="text-gray-400">Frontend</span>
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-[#00ccff]"></div>
+            <span className="text-gray-400">Front</span>
           </div>
-          <div className="flex items-center gap-1 md:gap-2">
-            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#ff00ff]"></div>
-            <span className="text-gray-400">Backend</span>
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-[#ff00ff]"></div>
+            <span className="text-gray-400">Back</span>
           </div>
-          <div className="flex items-center gap-1 md:gap-2">
-            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#ffff00]"></div>
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-[#ffff00]"></div>
             <span className="text-gray-400">Tools</span>
           </div>
         </div>
 
-        <div className="absolute top-2 md:top-4 right-2 md:right-4 font-mono text-[10px] md:text-xs text-gray-500 text-right pointer-events-none">
+        <div className="absolute top-1.5 sm:top-3 right-2 sm:right-4 font-mono text-[9px] sm:text-xs text-gray-500 text-right pointer-events-none bg-black/60 sm:bg-transparent p-1 sm:p-0 rounded border border-white/5 sm:border-0">
           {mode === "graph" ? (
-            <>
-              <div>Drag nodes to move</div>
-              <div>Drag canvas to pan</div>
-            </>
+            <div>Drag nodes / pan canvas</div>
           ) : (
-            <>
-              <div>Move mouse to rotate</div>
-              <div>Hover to highlight</div>
-            </>
+            <div>Drag or swipe to rotate</div>
           )}
         </div>
       </div>

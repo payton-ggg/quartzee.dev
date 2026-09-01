@@ -34,7 +34,7 @@ export const FullpageNavigation: React.FC<FullpageNavigationProps> = ({
       {/* Floating Side Dots Navigation */}
       <nav
         aria-label="Section Navigation"
-        className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-4 py-4 px-2 rounded-full bg-[#111317]/95 border border-white/10 shadow-2xl transition-all"
+        className="fixed right-1.5 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-2.5 sm:gap-4 py-2.5 sm:py-4 px-1 sm:px-2 rounded-full bg-[#111317]/95 border border-white/10 shadow-2xl backdrop-blur-md transition-all"
       >
         {sections.map((sec, idx) => {
           const isActive = currentSection === idx;
@@ -48,8 +48,8 @@ export const FullpageNavigation: React.FC<FullpageNavigationProps> = ({
               title={sec.label}
               aria-label={`Go to ${sec.label}`}
             >
-              {/* Tooltip on hover */}
-              <div className="absolute right-9 px-2.5 py-1 rounded bg-black/90 border border-green-500/30 text-green-400 font-mono text-xs whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 -translate-x-1 group-hover:translate-x-0 shadow-lg">
+              {/* Tooltip on desktop hover */}
+              <div className="hidden sm:block absolute right-9 px-2.5 py-1 rounded bg-black/90 border border-green-500/30 text-green-400 font-mono text-xs whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 -translate-x-1 group-hover:translate-x-0 shadow-lg">
                 <span className="text-gray-500 mr-1.5">{num} //</span>
                 {sec.label}
               </div>
@@ -58,12 +58,12 @@ export const FullpageNavigation: React.FC<FullpageNavigationProps> = ({
               <div
                 className={`transition-all duration-300 rounded-full flex items-center justify-center ${
                   isActive
-                    ? "w-4 h-4 bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.8)] scale-110"
-                    : "w-2 h-2 bg-gray-600 hover:bg-gray-400 hover:scale-125"
+                    ? "w-3 h-3 sm:w-4 sm:h-4 bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.8)] scale-110"
+                    : "w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-600 hover:bg-gray-400 hover:scale-125"
                 }`}
               >
                 {isActive && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                  <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-black" />
                 )}
               </div>
             </button>
@@ -71,7 +71,7 @@ export const FullpageNavigation: React.FC<FullpageNavigationProps> = ({
         })}
 
         {/* Section Counter */}
-        <div className="mt-2 text-[10px] font-mono text-gray-500 flex flex-col items-center select-none border-t border-white/10 pt-2">
+        <div className="mt-1 sm:mt-2 text-[8px] sm:text-[10px] font-mono text-gray-500 flex flex-col items-center select-none border-t border-white/10 pt-1.5 sm:pt-2">
           <span className="text-green-400 font-bold">
             {String(currentSection + 1).padStart(2, "0")}
           </span>
