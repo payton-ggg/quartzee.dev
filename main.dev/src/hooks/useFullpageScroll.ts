@@ -3,15 +3,21 @@ import { useState, useEffect, useCallback, useRef } from "react";
 interface UseFullpageScrollOptions {
   totalSections: number;
   transitionDuration?: number;
+  wheelThreshold?: number; // Pixels of scroll accumulated before triggering transition
+  touchThreshold?: number; // Pixels of touch swipe before triggering transition
 }
 
 export function useFullpageScroll({
   totalSections,
-  transitionDuration = 700,
+  transitionDuration = 750,
+  wheelThreshold = 100,
+  touchThreshold = 85,
 }: UseFullpageScrollOptions) {
   const [currentSection, setCurrentSection] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
   const isScrollingRef = useRef(false);
+  const wheelAccumulatorRef = useRef(0);
+  const wheelResetTimeoutRef = useRef<number | null>(null);
   const touchStartY = useRef(0);
   const touchStartX = useRef(0);
   const touchTarget = useRef<HTMLElement | null>(null);
@@ -21,11 +27,13 @@ export function useFullpageScroll({
       if (index < 0 || index >= totalSections || isScrollingRef.current) return;
       isScrollingRef.current = true;
       setIsScrolling(true);
+      wheelAccumulatorRef.current = 0;
       setCurrentSection(index);
 
       setTimeout(() => {
         isScrollingRef.current = false;
         setIsScrolling(false);
+        wheelAccumulatorRef.current = 0;
       }, transitionDuration);
     },
     [totalSections, transitionDuration]
@@ -41,6 +49,12 @@ export function useFullpageScroll({
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
+      // If a transition is already in progress, ignore wheel delta
+      if (isScrollingRef.current) {
+        wheelAccumulatorRef.current = 0;
+        return;
+      }
+
       // Check if target is inside a scrollable container that can still scroll in that direction
       let target = e.target as HTMLElement | null;
       let isInsideScrollable = false;
@@ -49,7 +63,8 @@ export function useFullpageScroll({
         if (target.getAttribute("data-scrollable") === "true") {
           const { scrollTop, scrollHeight, clientHeight } = target;
           const isAtTop = scrollTop <= 0;
-          const isAtBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 2;
+          const isAtBottom =
+            Math.ceil(scrollTop + clientHeight) >= scrollHeight - 2;
 
           if ((e.deltaY < 0 && !isAtTop) || (e.deltaY > 0 && !isAtBottom)) {
             isInsideScrollable = true;
@@ -59,12 +74,28 @@ export function useFullpageScroll({
         target = target.parentElement;
       }
 
-      if (isInsideScrollable) return;
+      if (isInsideScrollable) {
+        wheelAccumulatorRef.current = 0;
+        return;
+      }
 
-      if (Math.abs(e.deltaY) < 25) return;
-      if (e.deltaY > 0) {
+      // Accumulate wheel delta
+      wheelAccumulatorRef.current += e.deltaY;
+
+      // Reset accumulator if scrolling stops for 250ms
+      if (wheelResetTimeoutRef.current) {
+        clearTimeout(wheelResetTimeoutRef.current);
+      }
+      wheelResetTimeoutRef.current = window.setTimeout(() => {
+        wheelAccumulatorRef.current = 0;
+      }, 250);
+
+      // Only trigger if threshold is exceeded
+      if (wheelAccumulatorRef.current >= wheelThreshold) {
+        wheelAccumulatorRef.current = 0;
         nextSection();
-      } else {
+      } else if (wheelAccumulatorRef.current <= -wheelThreshold) {
+        wheelAccumulatorRef.current = 0;
         prevSection();
       }
     };
@@ -93,12 +124,17 @@ export function useFullpageScroll({
     };
 
     const handleTouchStart = (e: TouchEvent) => {
-      touchStartY.current = e.touches[0].clientY;
-      touchStartX.current = e.touches[0].clientX;
-      touchTarget.current = e.target as HTMLElement | null;
+      if (e.touches.length === 1) {
+        touchStartY.current = e.touches[0].clientY;
+        touchStartX.current = e.touches[0].clientX;
+        touchTarget.current = e.target as HTMLElement | null;
+      }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
+      if (isScrollingRef.current) return;
+      if (e.changedTouches.length === 0) return;
+
       const touchEndY = e.changedTouches[0].clientY;
       const touchEndX = e.changedTouches[0].clientX;
       const diffY = touchStartY.current - touchEndY;
@@ -107,7 +143,8 @@ export function useFullpageScroll({
       // Ignore predominantly horizontal swipes (e.g. tabs or graph drags)
       if (Math.abs(diffX) > Math.abs(diffY) * 1.5) return;
 
-      if (Math.abs(diffY) > 40) {
+      // Must exceed touchThreshold (e.g. 85px)
+      if (Math.abs(diffY) >= touchThreshold) {
         // Check if touch is inside a scrollable container
         let target = touchTarget.current;
         let isInsideScrollable = false;
@@ -149,8 +186,18 @@ export function useFullpageScroll({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchend", handleTouchEnd);
+      if (wheelResetTimeoutRef.current) {
+        clearTimeout(wheelResetTimeoutRef.current);
+      }
     };
-  }, [nextSection, prevSection, goToSection, totalSections]);
+  }, [
+    nextSection,
+    prevSection,
+    goToSection,
+    totalSections,
+    wheelThreshold,
+    touchThreshold,
+  ]);
 
   return {
     currentSection,
