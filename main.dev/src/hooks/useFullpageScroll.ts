@@ -55,34 +55,38 @@ export function useFullpageScroll({
         return;
       }
 
-      // Check if event originated inside any scrollable container or card
+      // Check if event originated inside a container that ACTUALLY has internal scroll
       let target = e.target as HTMLElement | null;
-      let isInsideScrollable = false;
+      let hasInternalScroll = false;
 
       while (
         target &&
         target !== document.body &&
         target !== document.documentElement
       ) {
-        if (target.getAttribute("data-scrollable") === "true") {
-          isInsideScrollable = true;
-          break;
-        }
+        const hasVerticalOverflow = target.scrollHeight > target.clientHeight + 2;
 
-        const style = window.getComputedStyle(target);
-        if (
-          (style.overflowY === "auto" || style.overflowY === "scroll") &&
-          target.scrollHeight > target.clientHeight
-        ) {
-          isInsideScrollable = true;
-          break;
+        if (hasVerticalOverflow) {
+          const isDataScrollable =
+            target.getAttribute("data-scrollable") === "true";
+          const style = window.getComputedStyle(target);
+          const isScrollableStyle =
+            style.overflowY === "auto" ||
+            style.overflowY === "scroll" ||
+            style.overflow === "auto" ||
+            style.overflow === "scroll";
+
+          if (isDataScrollable || isScrollableStyle) {
+            hasInternalScroll = true;
+            break;
+          }
         }
 
         target = target.parentElement;
       }
 
-      // If user is scrolling inside a box, do NOT trigger fullpage section transition
-      if (isInsideScrollable) {
+      // If the box ACTUALLY has internal scroll, let it scroll internally and do not switch fullpage slide
+      if (hasInternalScroll) {
         wheelAccumulatorRef.current = 0;
         return;
       }
@@ -153,34 +157,39 @@ export function useFullpageScroll({
 
       // Must exceed touchThreshold (e.g. 85px)
       if (Math.abs(diffY) >= touchThreshold) {
-        // Check if touch originated inside a scrollable container
+        // Check if touch originated inside a container that ACTUALLY has internal scroll
         let target = touchTarget.current;
-        let isInsideScrollable = false;
+        let hasInternalScroll = false;
 
         while (
           target &&
           target !== document.body &&
           target !== document.documentElement
         ) {
-          if (target.getAttribute("data-scrollable") === "true") {
-            isInsideScrollable = true;
-            break;
-          }
+          const hasVerticalOverflow =
+            target.scrollHeight > target.clientHeight + 2;
 
-          const style = window.getComputedStyle(target);
-          if (
-            (style.overflowY === "auto" || style.overflowY === "scroll") &&
-            target.scrollHeight > target.clientHeight
-          ) {
-            isInsideScrollable = true;
-            break;
+          if (hasVerticalOverflow) {
+            const isDataScrollable =
+              target.getAttribute("data-scrollable") === "true";
+            const style = window.getComputedStyle(target);
+            const isScrollableStyle =
+              style.overflowY === "auto" ||
+              style.overflowY === "scroll" ||
+              style.overflow === "auto" ||
+              style.overflow === "scroll";
+
+            if (isDataScrollable || isScrollableStyle) {
+              hasInternalScroll = true;
+              break;
+            }
           }
 
           target = target.parentElement;
         }
 
-        // If user is swiping inside a box, do NOT switch fullpage section
-        if (isInsideScrollable) return;
+        // If the box ACTUALLY has internal scroll, do not switch fullpage section
+        if (hasInternalScroll) return;
 
         if (diffY > 0) {
           nextSection();
